@@ -29,17 +29,17 @@ function App() {
           <Route
             path="/"
             element={
-              loggedIn ? (
+              // loggedIn ? (
                 <Navigate to="/chat/1" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              // ) : (
+              //   <Navigate to="/login" replace />
+              // )
             }
           />
-          <Route
+          {/* <Route
             path="/login"
             element={<Login onLogin={handleLogin} />}
-          ></Route>
+          ></Route> */}
           <Route element={<SideBar />}>
             <Route path="/chat/:id" element={<Chat />}></Route>
           </Route>
