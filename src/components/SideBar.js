@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
+import { FaUserCircle, FaEllipsisV } from "react-icons/fa"; // Import ellipsis icon
 import { Header } from "./Header";
 import Dashboard from "../pages/Dashboard";
 import { ClickButton } from "./Buttons";
-import { FaUserCircle } from "react-icons/fa";
 import Chat from "../pages/Chat";
 
 const SideBar = () => {
@@ -13,13 +13,21 @@ const SideBar = () => {
     JSON.parse(localStorage.getItem("openMenu")) || {}
   );
   const initialChatHistory = [
-    { id: 1, title: "Chat 1 - Project Discussion", date: "2023-09-16" },
-    { id: 2, title: "Chat 2 - Planning", date: "2023-09-17" },
+    {
+      id: 1,
+      title: "Chat 1 - Project Discussion",
+      date: "2023-09-16",
+      messages: [],
+    },
+    { id: 2, title: "Chat 2 - Planning", date: "2023-09-17", messages: [] },
   ];
   const [chatHistory, setChatHistory] = useState(
     JSON.parse(localStorage.getItem("chatHistory")) || initialChatHistory
   );
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // User profile popup
+  const [chatPopup, setChatPopup] = useState(null); // Chat-specific popup
+  const [renameChatId, setRenameChatId] = useState(null); // Track chat to rename
+  const [newChatTitle, setNewChatTitle] = useState(""); // Store new title
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,6 +61,7 @@ const SideBar = () => {
       id: newId,
       title: `Chat ${newId} - New Chat`,
       date: new Date().toLocaleDateString(),
+      messages: [],
     };
     setChatHistory([newChat, ...chatHistory]);
     navigate(`/chat/${newId}`);
@@ -60,6 +69,39 @@ const SideBar = () => {
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
+    setChatPopup(null); // Close chat popup if user profile popup is toggled
+  };
+
+  const handleChatPopup = (chatId) => {
+    setChatPopup(chatPopup === chatId ? null : chatId); // Toggle chat-specific popup
+    setIsPopupOpen(false); // Close user profile popup
+    setRenameChatId(null); // Reset rename state
+  };
+
+  const handleRenameChat = (chatId) => {
+    const chat = chatHistory.find((c) => c.id === chatId);
+    setNewChatTitle(chat.title);
+    setRenameChatId(chatId);
+  };
+
+  const handleSaveRename = (chatId) => {
+    if (newChatTitle.trim()) {
+      setChatHistory((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId ? { ...chat, title: newChatTitle } : chat
+        )
+      );
+      setRenameChatId(null);
+      setChatPopup(null);
+    }
+  };
+
+  const handleDeleteChat = (chatId) => {
+    setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
+    setChatPopup(null);
+    if (window.location.pathname === `/chat/${chatId}`) {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -81,14 +123,56 @@ const SideBar = () => {
             <ul>
               {chatHistory.map((chat) => (
                 <li key={chat.id} className="chat-history-item">
-                  <NavLink
-                    to={`/chat/${chat.id}`}
-                    className="nav-link"
-                    onClick={handleLinkClick}
-                  >
-                    <span className="list-text">{chat.title}</span>
-                    <span className="chat-date">{chat.date}</span>
-                  </NavLink>
+                  <div className="chat-item-container">
+                    <NavLink
+                      to={`/chat/${chat.id}`}
+                      className="nav-link"
+                      onClick={handleLinkClick}
+                    >
+                      <span className="list-text">{chat.title}</span>
+                      <span className="chat-date">{chat.date}</span>
+                    </NavLink>
+                    <FaEllipsisV
+                      className="chat-options-icon"
+                      onClick={() => handleChatPopup(chat.id)}
+                    />
+                    {chatPopup === chat.id && (
+                      <div className="chat-popup">
+                        <div
+                          className="popup-item"
+                          onClick={() => handleRenameChat(chat.id)}
+                        >
+                          Rename
+                        </div>
+                        <div
+                          className="popup-item"
+                          onClick={() => handleDeleteChat(chat.id)}
+                        >
+                          Delete
+                        </div>
+                      </div>
+                    )}
+                    {renameChatId === chat.id && (
+                      <div className="rename-input-container">
+                        <input
+                          type="text"
+                          value={newChatTitle}
+                          onChange={(e) => setNewChatTitle(e.target.value)}
+                          className="rename-input"
+                          placeholder="Enter new title"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveRename(chat.id);
+                          }}
+                        />
+                        <button
+                          className="rename-save-btn"
+                          onClick={() => handleSaveRename(chat.id)}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -110,7 +194,10 @@ const SideBar = () => {
       <div id="main">
         <Routes>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat/:id" element={<Chat />} />
+          <Route
+            path="/chat/:id"
+            element={<Chat setChatHistory={setChatHistory} />}
+          />
         </Routes>
       </div>
     </div>

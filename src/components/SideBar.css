@@ -62,8 +62,6 @@ ul {
   margin-top: 20px;
   padding-top: 15px;
   border-top: 1px solid #e2e8f0;
-  max-height: 400px;
-  overflow-y: auto;
 }
 .chat-history h6 {
   font-size: 14px;
@@ -174,4 +172,61 @@ ul {
 }
 .instant-add:hover {
   background: #2563eb !important;
+}
+.chat-item-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.chat-options-icon {
+  cursor: pointer;
+  font-size: 16px;
+  color: #64748b;
+  margin-left: 10px;
+}
+.chat-options-icon:hover {
+  color: #3b82f6;
+}
+.chat-popup {
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  width: 120px;
+  z-index: 999;
+}
+.rename-input-container {
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+}
+.rename-input {
+  width: 150px;
+  padding: 5px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.rename-save-btn {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.rename-save-btn:hover {
+  background: #2563eb;
 }

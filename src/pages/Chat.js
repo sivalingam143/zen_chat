@@ -59,21 +59,37 @@ const defaultQA = [
   },
 ];
 
-const Chat = () => {
+const Chat = ({ setChatHistory }) => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [displayedBotMessage, setDisplayedBotMessage] = useState(""); // For typing effect
-  const [isTyping, setIsTyping] = useState(false); // Track typing state
+  const [displayedBotMessage, setDisplayedBotMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    const currentChat = chatHistory.find((chat) => chat.id === parseInt(id));
+    if (currentChat && currentChat.messages) {
+      setMessages(currentChat.messages);
+    }
+  }, [id]);
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
 
-    // Add user's message
     const userMessage = { text: message, sender: "user" };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
-    // Find matching answer or use fallback
+    // Update chatHistory in localStorage and parent state
+    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    setChatHistory((prev) =>
+      prev.map((chat) =>
+        chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat
+      )
+    );
+
     const matchedQA = defaultQA.find((qa) =>
       qa.question.toLowerCase().includes(message.toLowerCase())
     );
@@ -81,14 +97,22 @@ const Chat = () => {
       ? matchedQA.answer
       : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-    // Add bot message to messages (full text for storage)
-    setMessages((prev) => [...prev, { text: botResponse, sender: "bot" }]);
-    setMessage(""); // Clear input
-    setDisplayedBotMessage(""); // Reset displayed text
-    setIsTyping(true); // Start typing effect
+    const botMessage = { text: botResponse, sender: "bot" };
+    const finalMessages = [...updatedMessages, botMessage];
+    setMessages(finalMessages);
+    setMessage("");
+    setDisplayedBotMessage("");
+    setIsTyping(true);
+
+    // Update localStorage and parent state with bot message
+    setChatHistory((prev) =>
+      prev.map((chat) =>
+        chat.id === parseInt(id) ? { ...chat, messages: finalMessages } : chat
+      )
+    );
   };
 
-  // Typing effect for bot response
+  // Typing effect
   useEffect(() => {
     if (isTyping && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
@@ -106,11 +130,11 @@ const Chat = () => {
             setDisplayedBotMessage((prev) =>
               prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
             );
-          }, 100); // Adjust delay (100ms per word)
+          }, 100);
 
           return () => clearTimeout(timer);
         } else {
-          setIsTyping(false); // Stop typing when done
+          setIsTyping(false);
         }
       }
     }
@@ -142,7 +166,7 @@ const Chat = () => {
                     {msg.sender === "bot" &&
                     isTyping &&
                     messages[messages.length - 1] === msg
-                      ? displayedBotMessage || "..." // Show typing effect for the latest bot message
+                      ? displayedBotMessage || "..."
                       : msg.text}
                   </div>
                 ))}
