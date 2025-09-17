@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Form, Spinner } from "react-bootstrap";
+import React from "react";
+import { Form } from "react-bootstrap";
 import Select from "react-select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Forms.css";
-import moment from "moment";
+
+import { FaArrowCircleRight } from "react-icons/fa";
 
 const TextInputForm = ({
   name,
@@ -19,12 +19,13 @@ const TextInputForm = ({
   autoFocus,
   disabled,
   onKeyPress,
+  onSend,
 }) => {
   return (
     <>
       <div className="pb-2">{labelname ? <label>{labelname}</label> : ""}</div>
-      <div className="form-icon">
-        <Form.Group className="">
+      <div className="form-icon position-relative">
+        <Form.Group className="mb-0">
           {prefix_icon ? (
             <span className="prefix-icon">{prefix_icon}</span>
           ) : (
@@ -46,13 +47,24 @@ const TextInputForm = ({
             value={value}
             placeholder={placeholder}
             onChange={onChange}
-            onKeyDown={onKeyDown}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && onSend) {
+                onSend();
+              }
+              if (onKeyDown) onKeyDown(e);
+            }}
             autoFocus={autoFocus}
             disabled={disabled}
             onKeyPress={onKeyPress}
           />
           {suffix_icon ? (
-            <span className="suffix-icon">{suffix_icon}</span>
+            <span
+              className="suffix-icon"
+              onClick={onSend}
+              style={{ cursor: "pointer" }}
+            >
+              {suffix_icon}
+            </span>
           ) : (
             ""
           )}
