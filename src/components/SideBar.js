@@ -6,7 +6,7 @@ import { Header } from "./Header";
 import Dashboard from "../pages/Dashboard";
 import { ClickButton } from "./Buttons";
 
-const SideBar = ({ onLogout }) => {
+const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
     JSON.parse(localStorage.getItem("openMenu")) || {}
   );
@@ -47,7 +47,7 @@ const SideBar = ({ onLogout }) => {
 
   return (
     <div className="chatgpt-sidebar-container">
-      <Header onLogout={onLogout} />
+      <Header />
       <aside id="side-bar" className="side-bar">
         <div className="list-group">
           <ul>

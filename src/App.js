@@ -22,12 +22,6 @@ function App() {
     setLoggedIn(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("session");
-    setLoggedIn(false);
-    return <Navigate to="/login" replace />;
-  };
-
   return (
     <div className="App">
       <BrowserRouter>
@@ -46,7 +40,7 @@ function App() {
             path="/login"
             element={<Login onLogin={handleLogin} />}
           ></Route>
-          <Route element={<SideBar onLogout={handleLogout} />}>
+          <Route element={<SideBar />}>
             <Route path="/dashboard" element={<Dashboard />}></Route>
           </Route>
         </Routes>
