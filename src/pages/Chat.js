@@ -4,7 +4,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { PageTitle } from "../components/PageTitle";
 import { TextInputForm } from "../components/Forms";
 import { FaArrowCircleRight } from "react-icons/fa";
-import "./Dashboard.css";
+import "./Chat.css";
 import categoryData from "./data";
 
 const Chat = ({ setChatHistory }) => {
