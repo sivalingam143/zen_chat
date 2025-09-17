@@ -94,7 +94,6 @@ const Login = ({ onLogin }) => {
       });
 
       const responseData = await response.json();
-      console.log(responseData);
       if (responseData.head.code !== 200) {
         setError(responseData.head.msg);
       } else if (responseData.head.code === 200) {
@@ -112,7 +111,34 @@ const Login = ({ onLogin }) => {
         localStorage.setItem("companyId", company_id);
         localStorage.setItem("session", "true");
         onLogin();
-        navigate("/chat/1");
+
+        // Check for last chat ID
+        const chatHistory =
+          JSON.parse(localStorage.getItem("chatHistory")) || [];
+        const lastChatId = localStorage.getItem("lastChatId");
+        const lastChatExists = chatHistory.find(
+          (chat) => chat.id === parseInt(lastChatId)
+        );
+
+        if (lastChatExists) {
+          navigate(`/chat/${lastChatId}`);
+        } else {
+          // Create a new chat if no valid last chat exists
+          const newId = chatHistory.length
+            ? Math.max(...chatHistory.map((c) => c.id)) + 1
+            : 1;
+          const newChat = {
+            id: newId,
+            title: "New Chat",
+            messages: [],
+          };
+          localStorage.setItem(
+            "chatHistory",
+            JSON.stringify([newChat, ...chatHistory])
+          );
+          localStorage.setItem("lastChatId", newId);
+          navigate(`/chat/${newId}`);
+        }
       }
     } catch (error) {
       console.error("Login error:", error.message);

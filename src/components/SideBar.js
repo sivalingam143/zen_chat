@@ -11,9 +11,8 @@ const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
     JSON.parse(localStorage.getItem("openMenu")) || {}
   );
-
   const [chatHistory, setChatHistory] = useState(
-    JSON.parse(localStorage.getItem("chatHistory"))
+    JSON.parse(localStorage.getItem("chatHistory")) || []
   );
   const [chatPopup, setChatPopup] = useState(null);
   const [renameChatId, setRenameChatId] = useState(null);
@@ -66,20 +65,25 @@ const SideBar = () => {
     });
   };
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (chatId) => {
     if (window.innerWidth <= 768) {
       document.body.classList.remove("toggle-sidebar");
     }
+    // Save the selected chat ID to localStorage
+    localStorage.setItem("lastChatId", chatId);
   };
 
   const handleNewChat = () => {
-    const newId = chatHistory.length + 1;
+    const newId = chatHistory.length
+      ? Math.max(...chatHistory.map((c) => c.id)) + 1
+      : 1;
     const newChat = {
       id: newId,
       title: "New Chat",
       messages: [],
     };
     setChatHistory([newChat, ...chatHistory]);
+    localStorage.setItem("lastChatId", newId); // Save new chat ID as last chat
     navigate(`/chat/${newId}`);
   };
 
@@ -110,12 +114,20 @@ const SideBar = () => {
   const handleDeleteChat = (chatId) => {
     setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
     setChatPopup(null);
-    if (window.location.pathname === `/chat/${chatId}`) {
-      navigate("/chat/1");
+    const lastChatId = localStorage.getItem("lastChatId");
+    if (lastChatId == chatId) {
+      const remainingChats = chatHistory.filter((chat) => chat.id !== chatId);
+      if (remainingChats.length > 0) {
+        const newLastChatId = remainingChats[0].id;
+        localStorage.setItem("lastChatId", newLastChatId);
+        navigate(`/chat/${newLastChatId}`);
+      } else {
+        localStorage.removeItem("lastChatId");
+        navigate("/chat/1");
+      }
     }
   };
 
-  // Get the first letter of the user's name or "G" for Guest
   const userInitial = user?.name?.charAt(0).toUpperCase() || "G";
 
   return (
@@ -162,7 +174,7 @@ const SideBar = () => {
                       <NavLink
                         to={`/chat/${chat.id}`}
                         className="nav-link"
-                        onClick={handleLinkClick}
+                        onClick={() => handleLinkClick(chat.id)}
                       >
                         <span className="list-text">{chat.title}</span>
                         {chat.title !== "New Chat" && (
