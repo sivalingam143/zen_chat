@@ -38,9 +38,17 @@ const Chat = ({ setChatHistory }) => {
       )
     );
 
-    const matchedQA = categoryData.find((qa) =>
-      qa.question.toLowerCase().includes(message.toLowerCase())
-    );
+    // Search through all category data arrays
+    let matchedQA = null;
+    for (const category in categoryData) {
+      if (categoryData[category].data) {
+        matchedQA = categoryData[category].data.find((qa) =>
+          qa.question.toLowerCase().includes(message.toLowerCase())
+        );
+        if (matchedQA) break;
+      }
+    }
+
     const botResponse = matchedQA
       ? matchedQA.answer
       : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
