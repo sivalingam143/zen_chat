@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
-import { FaUserCircle, FaEllipsisV } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
-
 import { ClickButton } from "./Buttons";
 import Chat from "../pages/Chat";
 
@@ -12,23 +11,22 @@ const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
     JSON.parse(localStorage.getItem("openMenu")) || {}
   );
-  const initialChatHistory = [
-    {
-      id: 1,
-      title: "Chat 1 - Project Discussion",
-      date: "2023-09-16",
-      messages: [],
-    },
-    { id: 2, title: "Chat 2 - Planning", date: "2023-09-17", messages: [] },
-  ];
+
   const [chatHistory, setChatHistory] = useState(
-    JSON.parse(localStorage.getItem("chatHistory")) || initialChatHistory
+    JSON.parse(localStorage.getItem("chatHistory"))
   );
   const [chatPopup, setChatPopup] = useState(null);
   const [renameChatId, setRenameChatId] = useState(null);
   const [newChatTitle, setNewChatTitle] = useState("");
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const popupRef = useRef(null); // Ref for the chat popup
+  const popupRef = useRef(null);
+
+  // Load user data from localStorage on mount
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    setUser(loggedInUser || { name: "Guest" });
+  }, []);
 
   // Save openMenu to localStorage
   useEffect(() => {
@@ -94,7 +92,7 @@ const SideBar = () => {
     const chat = chatHistory.find((c) => c.id === chatId);
     setNewChatTitle(chat.title);
     setRenameChatId(chatId);
-    setChatPopup(null); // Close popup
+    setChatPopup(null);
   };
 
   const handleSaveRename = (chatId) => {
@@ -116,6 +114,9 @@ const SideBar = () => {
       navigate("/chat/1");
     }
   };
+
+  // Get the first letter of the user's name or "G" for Guest
+  const userInitial = user?.name?.charAt(0).toUpperCase() || "G";
 
   return (
     <div className="chatgpt-sidebar-container">
@@ -197,8 +198,8 @@ const SideBar = () => {
         </div>
         <div className="user-profile">
           <div className="user-profile-container">
-            <FaUserCircle className="user-icon" />
-            <span className="user-name">User Name</span>
+            <div className="user-initial">{userInitial}</div>
+            <span className="user-name">{user?.name || "Guest"}</span>
           </div>
         </div>
       </aside>
