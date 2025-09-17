@@ -7,7 +7,7 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import "./Chat.css";
 import categoryData from "./data";
 
-const Chat = ({ setChatHistory }) => {
+const Chat = ({ setChatHistory, chatHistory }) => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -16,14 +16,15 @@ const Chat = ({ setChatHistory }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load messages from localStorage on mount
+  // Load messages when id or chatHistory changes
   useEffect(() => {
-    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
     const currentChat = chatHistory.find((chat) => chat.id === parseInt(id));
     if (currentChat && currentChat.messages) {
       setMessages(currentChat.messages);
+    } else {
+      setMessages([]); // Reset messages if no chat is found
     }
-  }, [id]);
+  }, [id, chatHistory]);
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -33,7 +34,6 @@ const Chat = ({ setChatHistory }) => {
     setMessages(updatedMessages);
 
     // Update chatHistory in localStorage and parent state
-    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat

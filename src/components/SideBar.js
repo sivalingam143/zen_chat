@@ -69,7 +69,6 @@ const SideBar = () => {
     if (window.innerWidth <= 768) {
       document.body.classList.remove("toggle-sidebar");
     }
-    // Save the selected chat ID to localStorage
     localStorage.setItem("lastChatId", chatId);
   };
 
@@ -82,8 +81,12 @@ const SideBar = () => {
       title: "New Chat",
       messages: [],
     };
-    setChatHistory([newChat, ...chatHistory]);
-    localStorage.setItem("lastChatId", newId); // Save new chat ID as last chat
+    setChatHistory((prev) => {
+      const updatedHistory = [newChat, ...prev];
+      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory)); // Update localStorage immediately
+      return updatedHistory;
+    });
+    localStorage.setItem("lastChatId", newId);
     navigate(`/chat/${newId}`);
   };
 
@@ -112,7 +115,11 @@ const SideBar = () => {
   };
 
   const handleDeleteChat = (chatId) => {
-    setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
+    setChatHistory((prev) => {
+      const updatedHistory = prev.filter((chat) => chat.id !== chatId);
+      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+      return updatedHistory;
+    });
     setChatPopup(null);
     const lastChatId = localStorage.getItem("lastChatId");
     if (lastChatId == chatId) {
@@ -177,9 +184,6 @@ const SideBar = () => {
                         onClick={() => handleLinkClick(chat.id)}
                       >
                         <span className="list-text">{chat.title}</span>
-                        {chat.title !== "New Chat" && (
-                          <span className="chat-date">{chat.date}</span>
-                        )}
                       </NavLink>
                     )}
                     <FaEllipsisV
@@ -219,7 +223,9 @@ const SideBar = () => {
         <Routes>
           <Route
             path="/chat/:id"
-            element={<Chat setChatHistory={setChatHistory} />}
+            element={
+              <Chat setChatHistory={setChatHistory} chatHistory={chatHistory} />
+            }
           />
         </Routes>
       </div>
