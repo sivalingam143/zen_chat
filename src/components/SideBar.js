@@ -11,8 +11,8 @@ const SideBar = () => {
     JSON.parse(localStorage.getItem("openMenu")) || {}
   );
   const [chatHistory, setChatHistory] = useState([
-    { id: 1, title: "Chat 1 - Project Discussion", date: "2025-09-16" },
-    { id: 2, title: "Chat 2 - Planning", date: "2025-09-15" },
+    { id: 1, title: "Chat 1 - Project Discussion" },
+    { id: 2, title: "Chat 2 - Planning" },
   ]);
 
   useEffect(() => {
@@ -40,7 +40,6 @@ const SideBar = () => {
     const newChat = {
       id: chatHistory.length + 1,
       title: `Chat ${chatHistory.length + 1} - New Chat`,
-      date: new Date().toISOString().split("T")[0],
     };
     setChatHistory([newChat, ...chatHistory]);
   };
