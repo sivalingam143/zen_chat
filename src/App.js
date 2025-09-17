@@ -24,7 +24,6 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("session");
-
     setLoggedIn(false);
     return <Navigate to="/login" replace />;
   };

@@ -8,112 +8,114 @@ ul {
 .side-bar {
   position: fixed;
   top: 72px;
-  left: 0; /* Sidebar is visible by default */
+  left: 0;
   bottom: 0;
   overflow-y: auto;
   scrollbar-width: thin;
-  background: #fff;
-  transition: 0.5s all;
+  background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+  transition: 0.3s all;
   z-index: 998;
-  box-shadow: 0px 2px 20px rgba(59, 59, 59, 0.1);
-  width: 230px;
-  padding: 14px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  width: 280px;
+  padding: 20px 15px;
 }
 .toggle-sidebar .side-bar {
-  left: -230px; /* Hide sidebar when toggled */
+  left: -280px;
 }
 #side-bar .list-group ul li {
-  padding: 1px 14px;
+  padding: 5px 10px;
   width: 100%;
   position: relative;
 }
 #side-bar .list-group ul li a,
 .list-group ul li a,
 .sub-menu {
-  border-radius: 5px;
-  color: rgb(62, 62, 62) !important;
-  transition: 0.25s all;
-  width: 100% !important;
   border-radius: 8px;
-  transition: all 0.4s;
-  padding: 8px 12px;
+  color: #1e293b !important;
+  transition: all 0.3s;
+  padding: 10px 15px;
   width: 100%;
-  overflow: hidden;
-  display: inline-flex;
-  gap: 13px;
-  font-size: 14px;
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 500;
 }
 #side-bar .list-group li > .nav-link:hover,
 #side-bar .list-group li > .sub-menu:hover,
 #side-bar .list-group li .active {
-  background-color: #da00372b;
-  color: #da0037 !important;
-  width: 100%;
-}
-#side-bar .list-group .li div.list-icon {
-  height: 24px;
-  width: 24px;
-}
-#side-bar.list-group .li .sub-menu.list-icon svg {
-  font-size: 22px;
+  background-color: #3b82f6;
+  color: #ffffff !important;
 }
 .list-icon {
   height: 24px;
   width: 24px;
-}
-.color {
-  background-color: 265073;
+  display: flex;
+  align-items: center;
 }
 .list-icon svg {
-  font-size: 20px;
+  font-size: 22px;
 }
-.arrow {
-  position: absolute;
-  right: 20px;
-  transition: 0.3s;
+.chat-history {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+  max-height: 400px;
+  overflow-y: auto;
 }
-.arrow.rotate {
-  transform: rotate(90deg);
+.chat-history h6 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+  padding-left: 15px;
 }
-#main,
-#footer {
-  margin-left: 228px; /* Default margin when sidebar is open */
+.chat-history-item .nav-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #1e293b !important;
 }
-.toggle-sidebar #main,
-.toggle-sidebar #footer {
-  margin-left: 0px; /* Remove margin when sidebar is closed */
+.chat-history-item .chat-date {
+  font-size: 12px;
+  color: #64748b;
+}
+.new-chat-button {
+  margin-bottom: 15px;
 }
 #main {
-  margin-top: 60px;
-  padding: 10px 8px;
-  transition: 0.5s all;
-}
-.main {
-  background-color: #ffffff;
-  border-radius: 5px;
+  margin-left: 280px;
+  margin-top: 72px;
   padding: 20px;
+  transition: 0.3s all;
+  background: #f1f5f9;
 }
-
-/* Mobile-specific styles */
+.toggle-sidebar #main {
+  margin-left: 0;
+}
 @media (max-width: 768px) {
   .side-bar {
-    position: fixed;
-    z-index: 999;
-    left: -230px; /* Initially hidden on mobile */
+    left: -280px;
   }
   .toggle-sidebar .side-bar {
-    left: 0; /* Show sidebar when toggled on mobile */
+    left: 0;
   }
-  #main,
-  #footer {
-    margin-left: 0 !important; /* No margin on mobile */
-  }
-  .toggle-sidebar #main,
-  .toggle-sidebar #footer {
+  #main {
     margin-left: 0 !important;
+    padding: 10px;
   }
-  .main {
-    position: relative;
-  }
+}
+.instant-add {
+  background: #3b82f6 !important;
+  border: none !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  padding: 10px 15px !important;
+  transition: 0.3s all;
+}
+.instant-add:hover {
+  background: #2563eb !important;
 }

@@ -1,31 +1,31 @@
 .header {
-  background-color: #ffffff;
-  transition: all 0.5s;
-  box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+  background: #ffffff;
+  transition: all 0.3s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   z-index: 999;
+  height: 72px;
 }
 .menu-toggle {
   background: none !important;
   border: none !important;
+  color: #1e293b !important;
 }
 .user-logo {
-  width: 60px;
+  width: 50px;
 }
 .user-logo img {
   width: 100%;
 }
-.user-id {
-  font-size: 28px;
-}
-.company-select {
-  cursor: pointer;
-}
-.switch-company > .css-13cymwt-control {
-  background: #e0e0e0 !important;
-  border-radius: 10px !important;
+.logout-btn {
+  background: none !important;
   border: none !important;
+  color: #1e293b !important;
+  padding: 8px;
 }
-.loading-shimmer {
+.logout-btn:hover {
+  color: #3b82f6 !important;
+}
+.loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -37,31 +37,8 @@
   background-color: rgba(255, 255, 255, 0.5);
   z-index: 1000;
 }
-.shimmer-placeholder {
-  width: 300px;
-  height: 50px;
-  background: linear-gradient(90deg, #f3f3f3 25%, #e0e0e0 50%, #f3f3f3 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
 @media (max-width: 768px) {
   .header {
-    height: 70px;
-  }
-  .switch-company > .css-13cymwt-control {
-    margin: 0 0 !important;
-    width: 100%;
-    height: 70px;
-  }
-  .switch-company > .css-13cymwt-control .drop-down {
-    padding: 0 5px !important;
+    height: 60px;
   }
 }

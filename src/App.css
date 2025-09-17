@@ -6,247 +6,43 @@
 }
 
 body {
-  background-color: #f1f1f1 !important;
+  background-color: #f1f5f9 !important;
   font-family: "regular" !important;
-}
-
-.pad {
-  padding: 100px;
-}
-
-.login-box {
-  padding: 26px;
-}
-
-.login-logo {
-  width: 150px;
-}
-
-.login-bg {
-  background-color: whitesmoke;
-}
-
-.login-box {
-  background-color: #f1f1f1;
-  border-radius: 12px;
-  border: 2px solid #e9e9e9;
+  margin: 0;
 }
 
 a {
   text-decoration: none !important;
 }
 
-col {
-  padding: 0 10px !important;
+.pad {
+  padding: 50px;
 }
 
-.row > * {
-  padding: 7px !important;
+.login-box {
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.wrdbrk {
-  white-space: pre;
+.login-logo {
+  width: 120px;
 }
 
-textarea {
-  resize: none;
+.login-bg {
+  background: linear-gradient(135deg, #e2e8f0, #f1f5f9);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
-/* maincontent */
-
-.stick-bottom {
-  position: sticky;
-  z-index: 77;
-  bottom: 0;
-  background: #f8f8f8;
-}
-
-.stick-top {
-  position: sticky;
-  z-index: 99;
-  top: 0px;
-}
-
-.inside {
-  background-color: #f8f8f8;
-  padding: 20px;
-  border: 1px solid #e7e7e7;
-  border-radius: 5px;
-}
-
-.scroll {
-  height: 250px;
-  overflow-y: scroll;
-  scrollbar-width: thin;
-}
-
-.inside .table > :not(caption) > * > * {
-  background-color: none !important;
-}
-
-.modal-header {
-  display: block !important;
-  padding: 0 !important;
-}
-
-.table {
-  --bs-table-bg: none !important;
-}
-
-/* .nav-link */
-.navbar .navbar-nav .nav-link {
-  margin: 0 170px;
-  transition: 1s all;
-  padding: 6px;
-  width: 100%;
-  border-radius: 5px;
-}
-
-.navbar-nav .nav-link.active {
-  background-color: #527dff;
-  color: #fcfcfc !important;
-}
-
-.navbar .navbar-nav a:hover {
-  background-color: #527dff;
-  color: #fcfcfc !important;
-  width: 100%;
-}
-
-.nav-tabs .nav-link {
-  color: #1e1d1d !important;
-  border-radius: 0px !important;
-}
-
-.nav-tabs .nav-link.active {
-  border-bottom: 4px solid #527dff !important;
-  color: #2b2b2b !important;
-  border-radius: 0px !important;
-}
-
-.nav-fill .nav-item .nav-link {
-  width: 100%;
-  margin: 0 auto;
-}
-
-.user-id button {
-  color: #1e1d1d !important;
-  font-size: 30px;
-}
-
-/* products page */
-
-.sub-menu {
-  border-radius: 5px;
-  color: rgb(62, 62, 62) !important;
-  transition: 0.25s all;
-  width: 100% !important;
-  border-radius: 8px;
-  transition: all 0.4s;
-  padding: 8px 12px;
-  width: 100%;
-  overflow: hidden;
-  display: inline-flex;
-  gap: 13px;
-  font-size: 14px;
-}
-
-/* purchasebill start*/
-.box {
-  padding: 15px 100px 15px 15px;
-  border-radius: 5px;
-  height: 10%;
-}
-
-.paid {
-  background-color: #ffb47e;
-}
-
-.unpaid {
-  background-color: #aa8cff;
-}
-
-.total {
-  background-color: #37c6ff;
-}
-
-.title-total {
-  font-size: 16px;
-}
-
-.maths-total {
-  font-size: 22px;
-}
-.w-5 {
-  width: 10%;
-}
-/* purchasebill end*/
-/* toggle switch start */
-.nav a {
-  color: #1b0f12 !important;
-}
-
-.nav a:hover {
-  color: #da0037 !important;
-}
-
-.nav li .nav-link.active {
-  border-bottom: 4px solid #da0037 !important;
-  color: #da0037 !important;
-  width: 100%;
-}
-
-.expense li {
-  margin: auto;
-}
-.instant-add {
-  border: 1px solid #d9241b !important;
-  color: #ffffff !important;
-  border-radius: 6px !important;
-  font-weight: 800 !important;
-  transition: 0.5s all;
-  font-size: 16px !important;
-  font-family: "regular" !important;
-  background: #d9241b !important;
-  border-radius: 0px 8px 8px 0px !important;
-  padding: 6.1px 12px !important;
-}
-
-.instant-btn {
-  margin-top: 32px;
-}
-.align-item-baseline {
-  align-items: last baseline !important;
-}
-.pdfviewlink {
-  display: block;
-  width: fit-content !important;
-  padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
-  clear: both;
-  font-weight: 400;
-  color: var(--bs-dropdown-link-color);
-  text-align: inherit;
-  text-decoration: none;
-  white-space: nowrap;
-  background-color: transparent;
-  border: 0;
-  border-radius: var(--bs-dropdown-item-border-radius, 0);
-}
-
-/* toggle switch end */
-@media (min-width: 1px) and (max-width: 767.98px) {
-  #main,
-  .main {
-    padding: 0px !important;
-  }
-
-  .inside {
-    font-size: 14px !important;
-  }
+@media (max-width: 768px) {
   .pad {
-    padding: 35px;
+    padding: 20px;
   }
   .login-logo {
-    width: 100px;
+    width: 80px;
   }
 }
