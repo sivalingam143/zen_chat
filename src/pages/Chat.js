@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
 import { PageTitle } from "../components/PageTitle";
@@ -63,28 +63,58 @@ const Chat = () => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [displayedBotMessage, setDisplayedBotMessage] = useState(""); // For typing effect
+  const [isTyping, setIsTyping] = useState(false); // Track typing state
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
 
-    // Add user's message to chat
+    // Add user's message
     const userMessage = { text: message, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
 
-    // Find matching answer in defaultQA
+    // Find matching answer or use fallback
     const matchedQA = defaultQA.find((qa) =>
       qa.question.toLowerCase().includes(message.toLowerCase())
     );
-
-    // Simulate Grok-like response
     const botResponse = matchedQA
       ? matchedQA.answer
       : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-    // Add bot's response to chat
+    // Add bot message to messages (full text for storage)
     setMessages((prev) => [...prev, { text: botResponse, sender: "bot" }]);
     setMessage(""); // Clear input
+    setDisplayedBotMessage(""); // Reset displayed text
+    setIsTyping(true); // Start typing effect
   };
+
+  // Typing effect for bot response
+  useEffect(() => {
+    if (isTyping && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (
+        lastMessage.sender === "bot" &&
+        displayedBotMessage !== lastMessage.text
+      ) {
+        const words = lastMessage.text.split(" ");
+        let currentIndex = displayedBotMessage
+          ? displayedBotMessage.split(" ").length
+          : 0;
+
+        if (currentIndex < words.length) {
+          const timer = setTimeout(() => {
+            setDisplayedBotMessage((prev) =>
+              prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
+            );
+          }, 100); // Adjust delay (100ms per word)
+
+          return () => clearTimeout(timer);
+        } else {
+          setIsTyping(false); // Stop typing when done
+        }
+      }
+    }
+  }, [isTyping, displayedBotMessage, messages]);
 
   return (
     <Container fluid className="position-relative main-content">
@@ -109,7 +139,11 @@ const Chat = () => {
                       msg.sender === "user" ? "user-message" : "bot-message"
                     }`}
                   >
-                    {msg.text}
+                    {msg.sender === "bot" &&
+                    isTyping &&
+                    messages[messages.length - 1] === msg
+                      ? displayedBotMessage || "..." // Show typing effect for the latest bot message
+                      : msg.text}
                   </div>
                 ))}
               </div>
