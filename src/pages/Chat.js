@@ -61,7 +61,7 @@ const Chat = ({ setChatHistory }) => {
         ? matchedQA.answer
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-      // Store bot response in pending state instead of messages
+      // Store bot response in pending state
       setPendingBotMessage({ text: botResponse, sender: "bot" });
       setIsLoading(false);
       setDisplayedBotMessage("");
@@ -69,22 +69,16 @@ const Chat = ({ setChatHistory }) => {
     }, 2000); // 2-second delay
   };
 
-  // Line-by-line typing effect
+  // Character-by-character typing effect
   useEffect(() => {
     if (isTyping && pendingBotMessage) {
-      const lines = pendingBotMessage.text
-        .split(". ")
-        .map((line) => line + (line.endsWith(".") ? "" : "."));
-      let currentIndex = displayedBotMessage
-        ? displayedBotMessage.split(". ").length - 1
-        : 0;
+      const fullText = pendingBotMessage.text;
+      let currentIndex = displayedBotMessage.length;
 
-      if (currentIndex < lines.length) {
+      if (currentIndex < fullText.length) {
         const timer = setTimeout(() => {
-          setDisplayedBotMessage((prev) =>
-            prev ? `${prev} ${lines[currentIndex]}` : lines[currentIndex]
-          );
-        }, 500); // 0.5 seconds per line
+          setDisplayedBotMessage(fullText.slice(0, currentIndex + 1));
+        }, 50); // 50ms per character for a natural typing effect
 
         return () => clearTimeout(timer);
       } else {
@@ -99,6 +93,7 @@ const Chat = ({ setChatHistory }) => {
         );
         setIsTyping(false);
         setPendingBotMessage(null);
+        setDisplayedBotMessage("");
       }
     }
   }, [isTyping, displayedBotMessage, pendingBotMessage, id, setChatHistory]);
