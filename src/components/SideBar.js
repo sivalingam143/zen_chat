@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
-import { FaUserCircle, FaEllipsisV } from "react-icons/fa"; // Import ellipsis icon
+import { FaUserCircle, FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
 import Dashboard from "../pages/Dashboard";
 import { ClickButton } from "./Buttons";
@@ -24,10 +24,10 @@ const SideBar = () => {
   const [chatHistory, setChatHistory] = useState(
     JSON.parse(localStorage.getItem("chatHistory")) || initialChatHistory
   );
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // User profile popup
-  const [chatPopup, setChatPopup] = useState(null); // Chat-specific popup
-  const [renameChatId, setRenameChatId] = useState(null); // Track chat to rename
-  const [newChatTitle, setNewChatTitle] = useState(""); // Store new title
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [chatPopup, setChatPopup] = useState(null);
+  const [renameChatId, setRenameChatId] = useState(null);
+  const [newChatTitle, setNewChatTitle] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,19 +69,20 @@ const SideBar = () => {
 
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
-    setChatPopup(null); // Close chat popup if user profile popup is toggled
+    setChatPopup(null);
   };
 
   const handleChatPopup = (chatId) => {
-    setChatPopup(chatPopup === chatId ? null : chatId); // Toggle chat-specific popup
-    setIsPopupOpen(false); // Close user profile popup
-    setRenameChatId(null); // Reset rename state
+    setChatPopup(chatPopup === chatId ? null : chatId);
+    setIsPopupOpen(false);
+    setRenameChatId(null);
   };
 
   const handleRenameChat = (chatId) => {
     const chat = chatHistory.find((c) => c.id === chatId);
     setNewChatTitle(chat.title);
     setRenameChatId(chatId);
+    setChatPopup(null); // Close popup
   };
 
   const handleSaveRename = (chatId) => {
@@ -92,7 +93,7 @@ const SideBar = () => {
         )
       );
       setRenameChatId(null);
-      setChatPopup(null);
+      setNewChatTitle("");
     }
   };
 
@@ -124,14 +125,36 @@ const SideBar = () => {
               {chatHistory.map((chat) => (
                 <li key={chat.id} className="chat-history-item">
                   <div className="chat-item-container">
-                    <NavLink
-                      to={`/chat/${chat.id}`}
-                      className="nav-link"
-                      onClick={handleLinkClick}
-                    >
-                      <span className="list-text">{chat.title}</span>
-                      <span className="chat-date">{chat.date}</span>
-                    </NavLink>
+                    {renameChatId === chat.id ? (
+                      <div className="rename-input-container">
+                        <input
+                          type="text"
+                          value={newChatTitle}
+                          onChange={(e) => setNewChatTitle(e.target.value)}
+                          className="rename-input"
+                          placeholder="Enter new title"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSaveRename(chat.id);
+                          }}
+                        />
+                        <button
+                          className="rename-save-btn"
+                          onClick={() => handleSaveRename(chat.id)}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    ) : (
+                      <NavLink
+                        to={`/chat/${chat.id}`}
+                        className="nav-link"
+                        onClick={handleLinkClick}
+                      >
+                        <span className="list-text">{chat.title}</span>
+                        <span className="chat-date">{chat.date}</span>
+                      </NavLink>
+                    )}
                     <FaEllipsisV
                       className="chat-options-icon"
                       onClick={() => handleChatPopup(chat.id)}
@@ -150,26 +173,6 @@ const SideBar = () => {
                         >
                           Delete
                         </div>
-                      </div>
-                    )}
-                    {renameChatId === chat.id && (
-                      <div className="rename-input-container">
-                        <input
-                          type="text"
-                          value={newChatTitle}
-                          onChange={(e) => setNewChatTitle(e.target.value)}
-                          className="rename-input"
-                          placeholder="Enter new title"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSaveRename(chat.id);
-                          }}
-                        />
-                        <button
-                          className="rename-save-btn"
-                          onClick={() => handleSaveRename(chat.id)}
-                        >
-                          Save
-                        </button>
                       </div>
                     )}
                   </div>
