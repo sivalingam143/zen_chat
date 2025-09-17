@@ -5,13 +5,13 @@ import { PageTitle } from "../components/PageTitle";
 import { TextInputForm } from "../components/Forms";
 import { FaArrowCircleRight } from "react-icons/fa";
 import "./Dashboard.css";
+import categoryData from "./data";
 
 const Chat = ({ setChatHistory }) => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [displayedBotMessage, setDisplayedBotMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
   // Load messages from localStorage on mount
@@ -23,71 +23,44 @@ const Chat = ({ setChatHistory }) => {
     }
   }, [id]);
 
-  const fetchAIResponse = async (userMessage) => {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: userMessage }] }],
-          }),
-        }
-      );
-
-      const data = await response.json();
-      console.log("AI Response:", data); // 🔎 Debugging
-
-      return (
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "⚠️ No response from Gemini."
-      );
-    } catch (error) {
-      console.error("Error fetching AI response:", error);
-      return "⚠️ Error connecting to AI service.";
-    }
-  };
-
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (!message.trim()) return;
 
-    // Add user message to chat
     const userMessage = { text: message, sender: "user" };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Save user message to chat history
+    // Update chatHistory in localStorage and parent state
+    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat
       )
     );
 
-    setMessage("");
-    setDisplayedBotMessage("");
-    setIsLoading(true);
+    const matchedQA = categoryData.find((qa) =>
+      qa.question.toLowerCase().includes(message.toLowerCase())
+    );
+    const botResponse = matchedQA
+      ? matchedQA.answer
+      : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-    // Fetch AI response
-    const botResponse = await fetchAIResponse(userMessage.text);
-    setIsLoading(false);
-
-    // Add bot response to messages
     const botMessage = { text: botResponse, sender: "bot" };
     const finalMessages = [...updatedMessages, botMessage];
     setMessages(finalMessages);
+    setMessage("");
+    setDisplayedBotMessage("");
+    setIsTyping(true);
 
-    // Save bot response to chat history
+    // Update localStorage and parent state with bot message
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: finalMessages } : chat
       )
     );
-
-    setIsTyping(true); // Start typing effect
   };
 
-  // Line-by-line typing effect
+  // Typing effect
   useEffect(() => {
     if (isTyping && messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
@@ -95,24 +68,21 @@ const Chat = ({ setChatHistory }) => {
         lastMessage.sender === "bot" &&
         displayedBotMessage !== lastMessage.text
       ) {
-        const lines = lastMessage.text
-          .split("\n")
-          .filter((line) => line.trim());
-        const currentLines = displayedBotMessage
-          ? displayedBotMessage.split("\n")
-          : [];
-        const currentIndex = currentLines.length;
+        const words = lastMessage.text.split(" ");
+        let currentIndex = displayedBotMessage
+          ? displayedBotMessage.split(" ").length
+          : 0;
 
-        if (currentIndex < lines.length) {
+        if (currentIndex < words.length) {
           const timer = setTimeout(() => {
-            setDisplayedBotMessage(
-              [...currentLines, lines[currentIndex]].join("\n")
+            setDisplayedBotMessage((prev) =>
+              prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
             );
-          }, 200); // 200ms delay per line for smooth effect
+          }, 100);
 
           return () => clearTimeout(timer);
         } else {
-          setIsTyping(false); // Stop typing when all lines are displayed
+          setIsTyping(false);
         }
       }
     }
@@ -148,11 +118,6 @@ const Chat = ({ setChatHistory }) => {
                       : msg.text}
                   </div>
                 ))}
-                {isLoading && (
-                  <div className="message bot-message loading">
-                    <span className="loading-dots">Loading...</span>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -167,7 +132,6 @@ const Chat = ({ setChatHistory }) => {
             className="chat-input"
             suffix_icon={<FaArrowCircleRight />}
             onSend={handleSendMessage}
-            disabled={isLoading} // Disable input during loading
           />
         </Col>
       </Row>

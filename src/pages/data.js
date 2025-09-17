@@ -1,4 +1,4 @@
-export const categoryData = {
+const categoryData = {
   Apartment: {
     totalQuestions: 16,
     totalAnswers: 16,
@@ -1624,3 +1624,5 @@ export const categoryData = {
     ],
   },
 };
+
+export default categoryData;
