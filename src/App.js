@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import SideBar from "./components/SideBar";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Chat from "./pages/Chat";
 
@@ -31,7 +30,7 @@ function App() {
             path="/"
             element={
               loggedIn ? (
-                <Navigate to="/dashboard" replace />
+                <Navigate to="/chat/1" replace />
               ) : (
                 <Navigate to="/login" replace />
               )
@@ -42,7 +41,6 @@ function App() {
             element={<Login onLogin={handleLogin} />}
           ></Route>
           <Route element={<SideBar />}>
-            <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/chat/:id" element={<Chat />}></Route>
           </Route>
         </Routes>

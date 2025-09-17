@@ -4,7 +4,7 @@ import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
 import { FaUserCircle, FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
-import Dashboard from "../pages/Dashboard";
+
 import { ClickButton } from "./Buttons";
 import Chat from "../pages/Chat";
 
@@ -113,7 +113,7 @@ const SideBar = () => {
     setChatHistory((prev) => prev.filter((chat) => chat.id !== chatId));
     setChatPopup(null);
     if (window.location.pathname === `/chat/${chatId}`) {
-      navigate("/dashboard");
+      navigate("/chat/1");
     }
   };
 
@@ -204,7 +204,6 @@ const SideBar = () => {
       </aside>
       <div id="main">
         <Routes>
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/chat/:id"
             element={<Chat setChatHistory={setChatHistory} />}

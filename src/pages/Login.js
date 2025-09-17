@@ -112,7 +112,7 @@ const Login = ({ onLogin }) => {
         localStorage.setItem("companyId", company_id);
         localStorage.setItem("session", "true");
         onLogin();
-        navigate("/dashboard");
+        navigate("/chat/1");
       }
     } catch (error) {
       console.error("Login error:", error.message);
