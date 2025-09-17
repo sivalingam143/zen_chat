@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
@@ -24,19 +24,38 @@ const SideBar = () => {
   const [chatHistory, setChatHistory] = useState(
     JSON.parse(localStorage.getItem("chatHistory")) || initialChatHistory
   );
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [chatPopup, setChatPopup] = useState(null);
   const [renameChatId, setRenameChatId] = useState(null);
   const [newChatTitle, setNewChatTitle] = useState("");
   const navigate = useNavigate();
+  const popupRef = useRef(null); // Ref for the chat popup
 
+  // Save openMenu to localStorage
   useEffect(() => {
     localStorage.setItem("openMenu", JSON.stringify(openMenu));
   }, [openMenu]);
 
+  // Save chatHistory to localStorage
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
   }, [chatHistory]);
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setChatPopup(null);
+      }
+    };
+
+    if (chatPopup !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [chatPopup]);
 
   const handleMenuClick = (menuIndex) => {
     setOpenMenu((prevOpenMenu) => {
@@ -59,22 +78,15 @@ const SideBar = () => {
     const newId = chatHistory.length + 1;
     const newChat = {
       id: newId,
-      title: `Chat ${newId} - New Chat`,
-      date: new Date().toLocaleDateString(),
+      title: "New Chat",
       messages: [],
     };
     setChatHistory([newChat, ...chatHistory]);
     navigate(`/chat/${newId}`);
   };
 
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-    setChatPopup(null);
-  };
-
   const handleChatPopup = (chatId) => {
     setChatPopup(chatPopup === chatId ? null : chatId);
-    setIsPopupOpen(false);
     setRenameChatId(null);
   };
 
@@ -152,7 +164,9 @@ const SideBar = () => {
                         onClick={handleLinkClick}
                       >
                         <span className="list-text">{chat.title}</span>
-                        <span className="chat-date">{chat.date}</span>
+                        {chat.title !== "New Chat" && (
+                          <span className="chat-date">{chat.date}</span>
+                        )}
                       </NavLink>
                     )}
                     <FaEllipsisV
@@ -160,7 +174,7 @@ const SideBar = () => {
                       onClick={() => handleChatPopup(chat.id)}
                     />
                     {chatPopup === chat.id && (
-                      <div className="chat-popup">
+                      <div className="chat-popup" ref={popupRef}>
                         <div
                           className="popup-item"
                           onClick={() => handleRenameChat(chat.id)}
@@ -182,16 +196,10 @@ const SideBar = () => {
           </div>
         </div>
         <div className="user-profile">
-          <div className="user-profile-container" onClick={togglePopup}>
+          <div className="user-profile-container">
             <FaUserCircle className="user-icon" />
             <span className="user-name">User Name</span>
           </div>
-          {isPopupOpen && (
-            <div className="user-popup">
-              <div className="popup-item">Personalization</div>
-              <div className="popup-item">Settings</div>
-            </div>
-          )}
         </div>
       </aside>
       <div id="main">

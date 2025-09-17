@@ -108,10 +108,7 @@ ul {
   border-radius: 8px;
   transition: all 0.3s;
 }
-.user-profile-container:hover {
-  background-color: #3b82f6;
-  color: #ffffff !important;
-}
+
 .user-icon {
   font-size: 24px;
   margin-right: 12px;
@@ -121,9 +118,7 @@ ul {
   font-weight: 500;
   color: #1e293b;
 }
-.user-profile-container:hover .user-name {
-  color: #ffffff !important;
-}
+
 .user-popup {
   position: absolute;
   bottom: 70px;
