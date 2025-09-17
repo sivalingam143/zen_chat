@@ -68,11 +68,16 @@
 }
 .loading-dots {
   display: inline-block;
-  animation: blink 1.4s steps(5, start) infinite;
+  animation: blink 1.2s steps(4, start) infinite;
 }
 
 @keyframes blink {
   to {
     visibility: hidden;
   }
+}
+
+.message.loading {
+  color: #888;
+  font-style: italic;
 }

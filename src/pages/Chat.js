@@ -52,11 +52,12 @@ const Chat = ({ setChatHistory }) => {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
+    // Add user message to chat
     const userMessage = { text: message, sender: "user" };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Save user message in history
+    // Save user message to chat history
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat
@@ -67,22 +68,23 @@ const Chat = ({ setChatHistory }) => {
     setDisplayedBotMessage("");
     setIsLoading(true);
 
-    // 🔹 Get AI response
+    // Fetch AI response
     const botResponse = await fetchAIResponse(userMessage.text);
     setIsLoading(false);
 
+    // Add bot response to messages
     const botMessage = { text: botResponse, sender: "bot" };
     const finalMessages = [...updatedMessages, botMessage];
     setMessages(finalMessages);
 
-    // Save bot response in history
+    // Save bot response to chat history
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: finalMessages } : chat
       )
     );
 
-    setIsTyping(true); // Start typing effect after fetching response
+    setIsTyping(true); // Start typing effect
   };
 
   // Line-by-line typing effect
@@ -96,20 +98,21 @@ const Chat = ({ setChatHistory }) => {
         const lines = lastMessage.text
           .split("\n")
           .filter((line) => line.trim());
-        let currentIndex = displayedBotMessage
-          ? displayedBotMessage.split("\n").length
-          : 0;
+        const currentLines = displayedBotMessage
+          ? displayedBotMessage.split("\n")
+          : [];
+        const currentIndex = currentLines.length;
 
         if (currentIndex < lines.length) {
           const timer = setTimeout(() => {
-            setDisplayedBotMessage((prev) =>
-              prev ? `${prev}\n${lines[currentIndex]}` : lines[currentIndex]
+            setDisplayedBotMessage(
+              [...currentLines, lines[currentIndex]].join("\n")
             );
-          }, 300); // 300ms delay per line
+          }, 200); // 200ms delay per line for smooth effect
 
           return () => clearTimeout(timer);
         } else {
-          setIsTyping(false);
+          setIsTyping(false); // Stop typing when all lines are displayed
         }
       }
     }
@@ -147,7 +150,7 @@ const Chat = ({ setChatHistory }) => {
                 ))}
                 {isLoading && (
                   <div className="message bot-message loading">
-                    <span className="loading-dots">...</span>
+                    <span className="loading-dots">Loading...</span>
                   </div>
                 )}
               </div>
