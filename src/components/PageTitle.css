@@ -1,0 +1,15 @@
+.create-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  align-items: center;
+}
+.page-head {
+  background-color: #f6f6f6;
+  border-radius: 0 0 5px 5px;
+}
+.page-bottom{background-color: #f6f6f6; border-radius: 0 5px;}
+.fixed {
+    position: sticky;
+    z-index: 99;
+  }

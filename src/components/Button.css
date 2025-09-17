@@ -1,0 +1,54 @@
+.openstock {
+  font-size: 10px;
+}
+button {
+  background: none !important;
+  border: none !important;
+}
+.create-btn {
+  border: 1px solid#da0037 !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+  transition: 0.5s all;
+  font-family: "regular" !important;
+  background: #da0037 !important;
+  border-radius: 5px !important;
+}
+.add-new {
+  background-color: #da0037;
+  display: inline-block;
+  border-radius: 5px !important;
+}
+.close button,
+.dlt button {
+  background: none !important;
+  border: none !important;
+  color: #252525 !important;
+  border-radius: 5px !important;
+}
+.add-more button {
+  background: none !important;
+  border: none !important;
+  color: #da0037 !important;
+  border-radius: 5px !important;
+}
+
+.delete {
+  color: #da0037 !important;
+  border-radius: 6px !important;
+  font-weight: 800 !important;
+  transition: 0.5s all;
+  font-size: 28px !important;
+  font-family: "regular" !important;
+  background: none !important;
+  border-radius: 0px 8px 8px 0px !important;
+  padding: 6.1px 12px !important;
+  border-radius: 5px !important;
+}
+
+.pagechangeicon {
+  color: white !important;
+  background-color: #da0037 !important;
+  padding: 5px !important;
+  border-radius: 5px !important;
+}

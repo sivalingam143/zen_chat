@@ -1,0 +1,98 @@
+.action {
+  border: none !important;
+  background: none !important;
+  color: #4444a8 !important;
+}
+
+table {
+  background-color: none !important;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+td {
+  vertical-align: middle !important;
+}
+
+.c-table table th:nth-last-child(1),
+.category-table table th:nth-last-child(1),
+.product-table table th:nth-last-child(1) {
+  text-align: end;
+}
+
+.category-table:nth-child(1) {
+  text-align: center;
+}
+
+.product-table table,
+.category-table table {
+  border: 1px solid #c0c0c0 !important;
+  font-size: 14px !important;
+}
+
+.product-table table tr,
+.product-table table td,
+.product-table table th,
+.category-table table tr,
+.category-table table td,
+.category-table table th {
+  border: 1px solid #bdbdbd !important;
+  vertical-align: middle !important;
+}
+
+.product-table table th,
+.category-table table th {
+  padding: 0.5rem 0.5rem !important;
+}
+
+.bill table th,
+td {
+  font-size: 15px;
+}
+/* .w-5{width: 5%;} */
+.w-7 {
+  width: 7%;
+}
+
+.w-10 {
+  width: 10%;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.w-20 {
+  width: 20%;
+}
+
+.w-30 {
+  width: 30%;
+}
+
+.wire-table table {
+  border: 1px solid #b1b1b1;
+}
+
+.wire-table table td {
+  border: 1px solid #b1b1b1;
+  padding: 7px;
+  font-size: 13px;
+}
+
+.wire-table table th {
+  border: 1px solid #b1b1b1;
+  padding: 2px;
+  font-size: 13px;
+}
+.table-scroll {
+  height: 448px;
+  overflow-y: scroll;
+  max-height: 450px;
+}
+@media (min-width: 1px) and (max-width: 767.98px) {
+  .product-table,
+  .category-table {
+    overflow-x: scroll !important;
+  }
+}
