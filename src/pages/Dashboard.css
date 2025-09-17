@@ -66,3 +66,13 @@
   color: #1e293b;
   align-self: flex-start;
 }
+.loading-dots {
+  display: inline-block;
+  animation: blink 1.4s steps(5, start) infinite;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
