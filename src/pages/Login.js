@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Row, Col, Alert } from "react-bootstrap";
-import { DropDownUI, TextInputForm } from "../components/Forms";
+import { TextInputForm } from "../components/Forms";
 import API_DOMAIN from "../config/config";
 import { VscEyeClosed, VscEye } from "react-icons/vsc";
 import { ClickButton } from "../components/Buttons";
@@ -144,20 +144,7 @@ const Login = ({ onLogin }) => {
                     Unleash Admin Excellence - Get Started Today
                   </div>
                 </Col>
-                {/* <Col lg="12">
-                  <div className="py-3">
-                    <DropDownUI
-                      optionlist={userData.map((user) => ({
-                        value: user.company_id,
-                        label: user.company_name,
-                      }))}
-                      placeholder="Select Company"
-                      name="company_id"
-                      value={company_id}
-                      onChange={(e) => setCompanyId(e.company_id)}
-                    />
-                  </div>
-                </Col> */}
+
                 <Col lg="12">
                   <div className="py-3">
                     <TextInputForm
