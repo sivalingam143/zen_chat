@@ -5,6 +5,7 @@ import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
 import { Header } from "./Header";
 import Dashboard from "../pages/Dashboard";
 import { ClickButton } from "./Buttons";
+import { FaUserCircle } from "react-icons/fa";
 
 const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
@@ -14,6 +15,7 @@ const SideBar = () => {
     { id: 1, title: "Chat 1 - Project Discussion" },
     { id: 2, title: "Chat 2 - Planning" },
   ]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("openMenu", JSON.stringify(openMenu));
@@ -44,6 +46,10 @@ const SideBar = () => {
     setChatHistory([newChat, ...chatHistory]);
   };
 
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
   return (
     <div className="chatgpt-sidebar-container">
       <Header />
@@ -71,6 +77,18 @@ const SideBar = () => {
               ))}
             </ul>
           </div>
+        </div>
+        <div className="user-profile">
+          <div className="user-profile-container" onClick={togglePopup}>
+            <FaUserCircle className="user-icon" />
+            <span className="user-name">User Name</span>
+          </div>
+          {isPopupOpen && (
+            <div className="user-popup">
+              <div className="popup-item">Personalization</div>
+              <div className="popup-item">Settings</div>
+            </div>
+          )}
         </div>
       </aside>
       <div id="main">
