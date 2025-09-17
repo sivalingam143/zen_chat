@@ -15,6 +15,10 @@ const Header = ({ onLogout }) => {
   const handleToggle = () => {
     document.body.classList.toggle("toggle-sidebar");
   };
+  const handleLogout = () => {
+    localStorage.removeItem("session");
+    window.location.replace("/login");
+  };
 
   return (
     <div>
@@ -37,7 +41,7 @@ const Header = ({ onLogout }) => {
             </div>
           </div>
           <div className="ms-auto">
-            <Button className="logout-btn" onClick={onLogout}>
+            <Button className="logout-btn" onClick={handleLogout}>
               <MdLogout size={24} />
             </Button>
           </div>
