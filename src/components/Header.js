@@ -32,13 +32,6 @@ const Header = () => {
             >
               <span className="navbar-toggler-icon"></span>
             </Button>
-            <div className="user-logo">
-              <img
-                src={require("../assests/images/logo1.png")}
-                className="img-fluid logo"
-                alt="Logo"
-              />
-            </div>
           </div>
           <div className="ms-auto">
             <Button className="logout-btn" onClick={handleLogout}>

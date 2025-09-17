@@ -10,12 +10,7 @@
   border: none !important;
   color: #1e293b !important;
 }
-.user-logo {
-  width: 50px;
-}
-.user-logo img {
-  width: 100%;
-}
+
 .logout-btn {
   background: none !important;
   border: none !important;
