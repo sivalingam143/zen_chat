@@ -58,18 +58,6 @@ const SideBar = ({ onLogout }) => {
                 className="instant-add w-100"
               />
             </li>
-            <li>
-              <NavLink
-                to="/dashboard"
-                className="nav-link"
-                onClick={handleLinkClick}
-              >
-                <span className="list-icon">
-                  <MdOutlineHome />
-                </span>
-                <span className="list-text">Home</span>
-              </NavLink>
-            </li>
           </ul>
           <div className="chat-history">
             <h6>Chat History</h6>
