@@ -5,6 +5,7 @@ import "./App.css";
 import SideBar from "./components/SideBar";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Chat from "./pages/Chat";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -42,6 +43,7 @@ function App() {
           ></Route>
           <Route element={<SideBar />}>
             <Route path="/dashboard" element={<Dashboard />}></Route>
+            <Route path="/chat/:id" element={<Chat />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
