@@ -12,7 +12,9 @@ const Chat = ({ setChatHistory }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [displayedBotMessage, setDisplayedBotMessage] = useState("");
+  const [pendingBotMessage, setPendingBotMessage] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Load messages from localStorage on mount
   useEffect(() => {
@@ -38,63 +40,68 @@ const Chat = ({ setChatHistory }) => {
       )
     );
 
-    // Search through all category data arrays
-    let matchedQA = null;
-    for (const category in categoryData) {
-      if (categoryData[category].data) {
-        matchedQA = categoryData[category].data.find((qa) =>
-          qa.question.toLowerCase().includes(message.toLowerCase())
-        );
-        if (matchedQA) break;
-      }
-    }
-
-    const botResponse = matchedQA
-      ? matchedQA.answer
-      : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
-
-    const botMessage = { text: botResponse, sender: "bot" };
-    const finalMessages = [...updatedMessages, botMessage];
-    setMessages(finalMessages);
+    // Clear input immediately
     setMessage("");
-    setDisplayedBotMessage("");
-    setIsTyping(true);
 
-    // Update localStorage and parent state with bot message
-    setChatHistory((prev) =>
-      prev.map((chat) =>
-        chat.id === parseInt(id) ? { ...chat, messages: finalMessages } : chat
-      )
-    );
-  };
-
-  // Typing effect
-  useEffect(() => {
-    if (isTyping && messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (
-        lastMessage.sender === "bot" &&
-        displayedBotMessage !== lastMessage.text
-      ) {
-        const words = lastMessage.text.split(" ");
-        let currentIndex = displayedBotMessage
-          ? displayedBotMessage.split(" ").length
-          : 0;
-
-        if (currentIndex < words.length) {
-          const timer = setTimeout(() => {
-            setDisplayedBotMessage((prev) =>
-              prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
-            );
-          }, 100);
-
-          return () => clearTimeout(timer);
-        } else {
-          setIsTyping(false);
+    // Show loading state for 2 seconds
+    setIsLoading(true);
+    setTimeout(() => {
+      // Search through all category data arrays
+      let matchedQA = null;
+      for (const category in categoryData) {
+        if (categoryData[category].data) {
+          matchedQA = categoryData[category].data.find((qa) =>
+            qa.question.toLowerCase().includes(message.toLowerCase())
+          );
+          if (matchedQA) break;
         }
       }
+
+      const botResponse = matchedQA
+        ? matchedQA.answer
+        : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
+
+      // Store bot response in pending state instead of messages
+      setPendingBotMessage({ text: botResponse, sender: "bot" });
+      setIsLoading(false);
+      setDisplayedBotMessage("");
+      setIsTyping(true);
+    }, 2000); // 2-second delay
+  };
+
+  // Line-by-line typing effect
+  useEffect(() => {
+    if (isTyping && pendingBotMessage) {
+      const lines = pendingBotMessage.text
+        .split(". ")
+        .map((line) => line + (line.endsWith(".") ? "" : "."));
+      let currentIndex = displayedBotMessage
+        ? displayedBotMessage.split(". ").length - 1
+        : 0;
+
+      if (currentIndex < lines.length) {
+        const timer = setTimeout(() => {
+          setDisplayedBotMessage((prev) =>
+            prev ? `${prev} ${lines[currentIndex]}` : lines[currentIndex]
+          );
+        }, 500); // 0.5 seconds per line
+
+        return () => clearTimeout(timer);
+      } else {
+        // Typing complete, add to messages and clear pending
+        setMessages((prev) => [...prev, pendingBotMessage]);
+        setChatHistory((prev) =>
+          prev.map((chat) =>
+            chat.id === parseInt(id)
+              ? { ...chat, messages: [...chat.messages, pendingBotMessage] }
+              : chat
+          )
+        );
+        setIsTyping(false);
+        setPendingBotMessage(null);
+      }
     }
-  }, [isTyping, displayedBotMessage, messages]);
+  }, [isTyping, displayedBotMessage, pendingBotMessage, id, setChatHistory]);
 
   return (
     <Container fluid className="position-relative main-content">
@@ -106,7 +113,7 @@ const Chat = ({ setChatHistory }) => {
       <Row className="chat-container">
         <Col>
           <div className="chat-area">
-            {messages.length === 0 ? (
+            {messages.length === 0 && !isLoading && !pendingBotMessage ? (
               <div className="chat-placeholder">
                 Chat {id} messages would be here
               </div>
@@ -119,13 +126,19 @@ const Chat = ({ setChatHistory }) => {
                       msg.sender === "user" ? "user-message" : "bot-message"
                     }`}
                   >
-                    {msg.sender === "bot" &&
-                    isTyping &&
-                    messages[messages.length - 1] === msg
-                      ? displayedBotMessage || "..."
-                      : msg.text}
+                    {msg.text}
                   </div>
                 ))}
+                {isLoading && (
+                  <div className="message bot-message loading">
+                    Loading<span className="loading-dots">...</span>
+                  </div>
+                )}
+                {isTyping && pendingBotMessage && (
+                  <div className="message bot-message">
+                    {displayedBotMessage || "..."}
+                  </div>
+                )}
               </div>
             )}
           </div>
