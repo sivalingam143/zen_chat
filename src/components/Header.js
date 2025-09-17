@@ -3,7 +3,7 @@ import { Navbar, Container, Button, Spinner } from "react-bootstrap";
 import { MdLogout } from "react-icons/md";
 import "./Header.css";
 
-const Header = ({ onLogout }) => {
+const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
