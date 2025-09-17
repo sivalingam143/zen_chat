@@ -6,59 +6,6 @@ import { TextInputForm } from "../components/Forms";
 import { FaArrowCircleRight } from "react-icons/fa";
 import "./Dashboard.css";
 
-const defaultQA = [
-  {
-    question: "What is React?",
-    answer:
-      "React is a JavaScript library for building user interfaces, particularly single-page applications.",
-  },
-  {
-    question: "How does useState work?",
-    answer:
-      "useState is a React Hook that lets you add state to functional components, returning a state variable and a function to update it.",
-  },
-  {
-    question: "What is a component?",
-    answer:
-      "A component is a reusable building block in React that encapsulates UI logic and rendering.",
-  },
-  {
-    question: "What is JSX?",
-    answer:
-      "JSX is a syntax extension for JavaScript that allows HTML-like code in React components.",
-  },
-  {
-    question: "What is the virtual DOM?",
-    answer:
-      "The virtual DOM is a lightweight copy of the actual DOM, used by React to optimize updates and rendering.",
-  },
-  {
-    question: "What is a Hook?",
-    answer:
-      "Hooks are functions in React that let you use state and other features in functional components.",
-  },
-  {
-    question: "How to handle events in React?",
-    answer:
-      "Events in React are handled using camelCase event handlers like onClick, passing functions as props.",
-  },
-  {
-    question: "What is Redux?",
-    answer:
-      "Redux is a state management library for JavaScript apps, often used with React for predictable state updates.",
-  },
-  {
-    question: "What is useEffect?",
-    answer:
-      "useEffect is a React Hook for handling side effects like data fetching or DOM manipulation in functional components.",
-  },
-  {
-    question: "Why use React Router?",
-    answer:
-      "React Router is used for declarative routing in React apps, enabling navigation between components without page reloads.",
-  },
-];
-
 const Chat = ({ setChatHistory }) => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
@@ -75,36 +22,58 @@ const Chat = ({ setChatHistory }) => {
     }
   }, [id]);
 
-  const handleSendMessage = () => {
+  const fetchAIResponse = async (userMessage) => {
+    try {
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+          process.env.REACT_APP_GEMINI_API_KEY,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: userMessage }] }],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("AI Response:", data); // 🔎 Debugging
+
+      return (
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "⚠️ No response from Gemini."
+      );
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      return "⚠️ Error connecting to AI service.";
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
 
     const userMessage = { text: message, sender: "user" };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Update chatHistory in localStorage and parent state
-    const chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || [];
+    // Save user message in history
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat
       )
     );
 
-    const matchedQA = defaultQA.find((qa) =>
-      qa.question.toLowerCase().includes(message.toLowerCase())
-    );
-    const botResponse = matchedQA
-      ? matchedQA.answer
-      : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
-
-    const botMessage = { text: botResponse, sender: "bot" };
-    const finalMessages = [...updatedMessages, botMessage];
-    setMessages(finalMessages);
     setMessage("");
     setDisplayedBotMessage("");
     setIsTyping(true);
 
-    // Update localStorage and parent state with bot message
+    // 🔹 Get AI response
+    const botResponse = await fetchAIResponse(userMessage.text);
+    const botMessage = { text: botResponse, sender: "bot" };
+    const finalMessages = [...updatedMessages, botMessage];
+    setMessages(finalMessages);
+
+    // Save bot response in history
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === parseInt(id) ? { ...chat, messages: finalMessages } : chat
@@ -130,7 +99,7 @@ const Chat = ({ setChatHistory }) => {
             setDisplayedBotMessage((prev) =>
               prev ? `${prev} ${words[currentIndex]}` : words[currentIndex]
             );
-          }, 100);
+          }, 10000);
 
           return () => clearTimeout(timer);
         } else {
