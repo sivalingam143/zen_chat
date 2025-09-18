@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
-import { MdOutlineKeyboardArrowRight, MdOutlineHome } from "react-icons/md";
 import { FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
 import { ClickButton } from "./Buttons";
@@ -115,9 +114,12 @@ const SideBar = () => {
           (chat) =>
             chat.id === chatId
               ? { ...chat, title: newChatTitle.trim().substring(0, 50) }
-              : chat // Limit to 50 chars for safety
+              : chat // Limit to 50 chars
         )
       );
+      setRenameChatId(null);
+      setNewChatTitle("");
+    } else {
       setRenameChatId(null);
       setNewChatTitle("");
     }
@@ -139,7 +141,7 @@ const SideBar = () => {
         navigate(`/chat/${newLastChatId}`);
       } else {
         localStorage.removeItem("lastChatId");
-        navigate("/chat/new"); // Redirect to new if no chats
+        navigate("/chat/new"); // Redirect if no chats
       }
     }
   };
@@ -178,6 +180,7 @@ const SideBar = () => {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") handleSaveRename(chat.id);
                           }}
+                          onBlur={() => handleSaveRename(chat.id)} // 🔹 Auto-save on outside click
                         />
                       </div>
                     ) : (
@@ -235,7 +238,7 @@ const SideBar = () => {
             element={
               <Chat setChatHistory={setChatHistory} chatHistory={chatHistory} />
             }
-          />{" "}
+          />
         </Routes>
       </div>
     </div>
