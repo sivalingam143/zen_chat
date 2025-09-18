@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import { FaArrowCircleRight } from "react-icons/fa";
@@ -24,6 +24,8 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [loadingChatId, setLoadingChatId] = useState(null);
   const [isFirstMessage, setIsFirstMessage] = useState(true);
+  const [suggestions, setSuggestions] = useState([]);
+  const inputRef = useRef(null);
 
   // Initialize chat if it doesn't exist
   useEffect(() => {
@@ -43,11 +45,11 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       setMessages([]);
       setIsFirstMessage(true);
     } else {
-      navigate("/chat/new", { replace: true }); // Redirect invalid IDs to /chat/new
+      navigate("/chat/new", { replace: true });
     }
   }, [id, chatHistory, navigate, setChatHistory]);
 
-  // Find best match for user message
+  // Find best match for user message (used for bot response)
   const findBestMatch = (userMessage) => {
     const userMessageClean = userMessage.toLowerCase().trim();
     for (const category in categoryData) {
@@ -61,6 +63,40 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       }
     }
     return { match: null, category: null };
+  };
+
+  const generateSuggestions = (input) => {
+    if (!input.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    const inputClean = input.toLowerCase().trim();
+    const filteredSuggestions = [];
+    for (const category in categoryData) {
+      if (categoryData[category].data) {
+        categoryData[category].data.forEach((qa) => {
+          if (qa.question.toLowerCase().includes(inputClean)) {
+            filteredSuggestions.push(qa.question);
+          }
+        });
+      }
+    }
+    // Limit to top 5 suggestions and remove duplicates
+    setSuggestions([...new Set(filteredSuggestions)].slice(0, 5));
+  };
+
+  // Handle input change to update suggestions
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setMessage(value);
+    generateSuggestions(value);
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    setMessage(suggestion);
+    setSuggestions([]); // Clear suggestions
+    inputRef.current.focus(); // Refocus input
   };
 
   // Generate chat title based on message
@@ -90,8 +126,9 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const userMessage = { text: message, sender: "user" };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
+    setSuggestions([]); // Clear suggestions on send
 
-    let newChatId = id; // Store the chat ID to use for bot response
+    let newChatId = id;
     setChatHistory((prev) => {
       let updatedHistory = [...prev];
       const currentChatIndex = updatedHistory.findIndex(
@@ -99,8 +136,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       );
 
       if (currentChatIndex === -1) {
-        // Create new chat if it doesn't exist
-        newChatId = generateUniqueId(); // Update newChatId for bot response
+        newChatId = generateUniqueId();
         const matched = findBestMatch(message);
         const newTitle = generateTitleFromMessage(message, matched);
         const newChat = {
@@ -112,7 +148,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         navigate(`/chat/${newChatId}`, { replace: true });
         setIsFirstMessage(false);
       } else {
-        // Update existing chat
         const matched = findBestMatch(message);
         const newTitle = isFirstMessage
           ? generateTitleFromMessage(message, matched)
@@ -131,7 +166,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
     setMessage("");
 
-    // Simulate bot typing with the correct chatId
     setLoadingChatId(newChatId);
     setTimeout(() => {
       const matched = findBestMatch(message);
@@ -220,14 +254,30 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       </Row>
       <Row className="search-bar">
         <Col>
-          <TextInputForm
-            placeholder="Type your message here..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="chat-input"
-            suffix_icon={<FaArrowCircleRight />}
-            onSend={handleSendMessage}
-          />
+          <div className="suggestion-container">
+            <TextInputForm
+              placeholder="Type your message here..."
+              value={message}
+              onChange={handleInputChange}
+              className="chat-input"
+              suffix_icon={<FaArrowCircleRight />}
+              onSend={handleSendMessage}
+              ref={inputRef}
+            />
+            {suggestions.length > 0 && (
+              <ul className="suggestion-list">
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </Col>
       </Row>
     </Container>
