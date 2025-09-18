@@ -72,10 +72,16 @@ const SideBar = () => {
     localStorage.setItem("lastChatId", chatId);
   };
 
+  // Generate unique random ID (alphanumeric, ~30 chars)
+  const generateUniqueId = () => {
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
+  };
+
   const handleNewChat = () => {
-    const newId = chatHistory.length
-      ? Math.max(...chatHistory.map((c) => c.id)) + 1
-      : 1;
+    const newId = generateUniqueId();
     const newChat = {
       id: newId,
       title: "New Chat",
@@ -83,7 +89,7 @@ const SideBar = () => {
     };
     setChatHistory((prev) => {
       const updatedHistory = [newChat, ...prev];
-      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory)); // Update localStorage immediately
+      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
       return updatedHistory;
     });
     localStorage.setItem("lastChatId", newId);
@@ -105,8 +111,11 @@ const SideBar = () => {
   const handleSaveRename = (chatId) => {
     if (newChatTitle.trim()) {
       setChatHistory((prev) =>
-        prev.map((chat) =>
-          chat.id === chatId ? { ...chat, title: newChatTitle } : chat
+        prev.map(
+          (chat) =>
+            chat.id === chatId
+              ? { ...chat, title: newChatTitle.trim().substring(0, 50) }
+              : chat // Limit to 50 chars for safety
         )
       );
       setRenameChatId(null);
@@ -122,7 +131,7 @@ const SideBar = () => {
     });
     setChatPopup(null);
     const lastChatId = localStorage.getItem("lastChatId");
-    if (lastChatId == chatId) {
+    if (lastChatId === chatId) {
       const remainingChats = chatHistory.filter((chat) => chat.id !== chatId);
       if (remainingChats.length > 0) {
         const newLastChatId = remainingChats[0].id;
@@ -130,7 +139,7 @@ const SideBar = () => {
         navigate(`/chat/${newLastChatId}`);
       } else {
         localStorage.removeItem("lastChatId");
-        navigate("/chat/1");
+        navigate("/chat/new"); // Redirect to new if no chats
       }
     }
   };
@@ -227,6 +236,12 @@ const SideBar = () => {
               <Chat setChatHistory={setChatHistory} chatHistory={chatHistory} />
             }
           />
+          <Route
+            path="/chat/new"
+            element={
+              <Chat setChatHistory={setChatHistory} chatHistory={chatHistory} />
+            }
+          />{" "}
         </Routes>
       </div>
     </div>

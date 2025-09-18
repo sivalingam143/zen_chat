@@ -15,16 +15,55 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [pendingBotMessage, setPendingBotMessage] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFirstMessage, setIsFirstMessage] = useState(true); // Track first message for auto rename
 
   // Load messages when id or chatHistory changes
   useEffect(() => {
-    const currentChat = chatHistory.find((chat) => chat.id === parseInt(id));
+    const currentChat = chatHistory.find((chat) => chat.id === id);
     if (currentChat && currentChat.messages) {
       setMessages(currentChat.messages);
+      setIsFirstMessage(currentChat.messages.length === 0);
     } else {
-      setMessages([]); // Reset messages if no chat is found
+      setMessages([]);
+      setIsFirstMessage(true);
     }
   }, [id, chatHistory]);
+
+  // Improved matching function (word-based similarity)
+  const findBestMatch = (userMessage) => {
+    const userWords = userMessage
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 2); // Split words, ignore short
+    let bestMatch = null;
+    let bestScore = 0;
+
+    for (const category in categoryData) {
+      if (categoryData[category].data) {
+        for (const qa of categoryData[category].data) {
+          const qaWords = qa.question.toLowerCase().split(/\s+/);
+          let score = 0;
+          for (const userWord of userWords) {
+            if (
+              qaWords.some(
+                (qaWord) =>
+                  qaWord.includes(userWord) || userWord.includes(qaWord)
+              )
+            ) {
+              score++;
+            }
+          }
+          const similarity = score / Math.max(userWords.length, qaWords.length);
+          if (similarity > 0.7 && similarity > bestScore) {
+            // 70% match threshold
+            bestScore = similarity;
+            bestMatch = qa;
+          }
+        }
+      }
+    }
+    return bestMatch;
+  };
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -33,10 +72,22 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
+    // Auto rename on first message
+    if (isFirstMessage) {
+      setChatHistory((prev) =>
+        prev.map((chat) =>
+          chat.id === id
+            ? { ...chat, title: message.trim().substring(0, 50) || "New Chat" }
+            : chat
+        )
+      );
+      setIsFirstMessage(false);
+    }
+
     // Update chatHistory in localStorage and parent state
     setChatHistory((prev) =>
       prev.map((chat) =>
-        chat.id === parseInt(id) ? { ...chat, messages: updatedMessages } : chat
+        chat.id === id ? { ...chat, messages: updatedMessages } : chat
       )
     );
 
@@ -46,16 +97,8 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     // Show loading state for 2 seconds
     setIsLoading(true);
     setTimeout(() => {
-      // Search through all category data arrays
-      let matchedQA = null;
-      for (const category in categoryData) {
-        if (categoryData[category].data) {
-          matchedQA = categoryData[category].data.find((qa) =>
-            qa.question.toLowerCase().includes(message.toLowerCase())
-          );
-          if (matchedQA) break;
-        }
-      }
+      // Improved search
+      const matchedQA = findBestMatch(message);
 
       const botResponse = matchedQA
         ? matchedQA.answer
@@ -66,7 +109,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       setIsLoading(false);
       setDisplayedBotMessage("");
       setIsTyping(true);
-    }, 2000); // 2-second delay
+    }, 2000);
   };
 
   // Character-by-character typing effect
@@ -78,7 +121,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       if (currentIndex < fullText.length) {
         const timer = setTimeout(() => {
           setDisplayedBotMessage(fullText.slice(0, currentIndex + 1));
-        }, 50); // 50ms per character for a natural typing effect
+        }, 50);
 
         return () => clearTimeout(timer);
       } else {
@@ -86,7 +129,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         setMessages((prev) => [...prev, pendingBotMessage]);
         setChatHistory((prev) =>
           prev.map((chat) =>
-            chat.id === parseInt(id)
+            chat.id === id
               ? { ...chat, messages: [...chat.messages, pendingBotMessage] }
               : chat
           )
@@ -100,17 +143,12 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
   return (
     <Container fluid className="position-relative main-content">
-      <Row>
-        <Col>
-          <PageTitle PageTitle={`Chat ${id}`} />
-        </Col>
-      </Row>
       <Row className="chat-container">
         <Col>
           <div className="chat-area">
             {messages.length === 0 && !isLoading && !pendingBotMessage ? (
               <div className="chat-placeholder">
-                Chat {id} messages would be here
+                Chat messages would be here
               </div>
             ) : (
               <div className="chat-messages">
