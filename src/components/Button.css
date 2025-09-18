@@ -6,12 +6,11 @@ button {
   border: none !important;
 }
 .create-btn {
-  border: 1px solid#da0037 !important;
   color: #ffffff !important;
   border-radius: 6px !important;
   transition: 0.5s all;
   font-family: "regular" !important;
-  background: #da0037 !important;
+  background: #127227 !important;
   border-radius: 5px !important;
 }
 .add-new {
