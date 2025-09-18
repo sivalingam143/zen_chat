@@ -179,12 +179,6 @@ const SideBar = () => {
                             if (e.key === "Enter") handleSaveRename(chat.id);
                           }}
                         />
-                        <button
-                          className="rename-save-btn"
-                          onClick={() => handleSaveRename(chat.id)}
-                        >
-                          Save
-                        </button>
                       </div>
                     ) : (
                       <NavLink
