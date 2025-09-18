@@ -13,7 +13,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [displayedBotMessage, setDisplayedBotMessage] = useState("");
   const [pendingBotMessage, setPendingBotMessage] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingChatId, setLoadingChatId] = useState(null); // ✅ loading tied to chatId
   const [isFirstMessage, setIsFirstMessage] = useState(true);
 
   // Load messages when id or chatHistory changes
@@ -112,17 +112,16 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
     setMessage("");
 
-    // Bot typing simulation
-    setIsLoading(true);
+    // Bot typing simulation with chatId lock
+    setLoadingChatId(id); // ✅ start loading only for this chat
     setTimeout(() => {
       const matched = findBestMatch(message);
       const botResponse = matched.match
         ? matched.match.answer
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-      // LOCK chat id with the pending bot message
       setPendingBotMessage({ text: botResponse, sender: "bot", chatId: id });
-      setIsLoading(false);
+      setLoadingChatId(null); // ✅ stop loading once bot is ready
       setDisplayedBotMessage("");
       setIsTyping(true);
     }, 2000);
@@ -161,7 +160,9 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       <Row className="chat-container">
         <Col>
           <div className="chat-area">
-            {messages.length === 0 && !isLoading && !pendingBotMessage ? (
+            {messages.length === 0 &&
+            loadingChatId !== id &&
+            !(pendingBotMessage && pendingBotMessage.chatId === id) ? (
               <div className="chat-placeholder">
                 Chat messages would be here
               </div>
@@ -177,7 +178,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
                     {msg.text}
                   </div>
                 ))}
-                {isLoading && (
+                {loadingChatId === id && (
                   <div className="message bot-message loading">
                     Loading<span className="loading-dots">...</span>
                   </div>
