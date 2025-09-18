@@ -6,7 +6,6 @@ import { ClickButton } from "./Buttons";
 import Chat from "../pages/Chat";
 import "./SideBar.css";
 
-// Sidebar component
 const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
     JSON.parse(localStorage.getItem("openMenu")) || {}
@@ -21,40 +20,31 @@ const SideBar = () => {
   const navigate = useNavigate();
   const popupRef = useRef(null);
 
-  // Load user data from localStorage on mount
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     setUser(loggedInUser || { name: "Guest" });
   }, []);
 
-  // Save openMenu to localStorage
   useEffect(() => {
     localStorage.setItem("openMenu", JSON.stringify(openMenu));
   }, [openMenu]);
 
-  // Save chatHistory to localStorage
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
   }, [chatHistory]);
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setChatPopup(null);
       }
     };
-
     if (chatPopup !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [chatPopup]);
 
-  // Toggle menu visibility
   const handleMenuClick = (menuIndex) => {
     setOpenMenu((prevOpenMenu) => {
       const newOpenMenu = {};
@@ -66,7 +56,6 @@ const SideBar = () => {
     });
   };
 
-  // Handle chat link click
   const handleLinkClick = (chatId) => {
     if (window.innerWidth <= 768) {
       document.body.classList.remove("toggle-sidebar");
@@ -74,7 +63,6 @@ const SideBar = () => {
     localStorage.setItem("lastChatId", chatId);
   };
 
-  // Generate unique random ID
   const generateUniqueId = () => {
     return (
       Math.random().toString(36).substring(2, 15) +
@@ -82,7 +70,6 @@ const SideBar = () => {
     );
   };
 
-  // Create new chat
   const handleNewChat = () => {
     const newId = generateUniqueId();
     const newChat = { id: newId, title: "New Chat", messages: [] };
@@ -95,13 +82,11 @@ const SideBar = () => {
     navigate(`/chat/${newId}`);
   };
 
-  // Toggle chat options popup
   const handleChatPopup = (chatId) => {
     setChatPopup(chatPopup === chatId ? null : chatId);
     setRenameChatId(null);
   };
 
-  // Start renaming chat
   const handleRenameChat = (chatId) => {
     const chat = chatHistory.find((c) => c.id === chatId);
     setNewChatTitle(chat.title);
@@ -109,7 +94,6 @@ const SideBar = () => {
     setChatPopup(null);
   };
 
-  // Save renamed chat title
   const handleSaveRename = (chatId) => {
     if (newChatTitle.trim()) {
       setChatHistory((prev) =>
@@ -119,15 +103,11 @@ const SideBar = () => {
             : chat
         )
       );
-      setRenameChatId(null);
-      setNewChatTitle("");
-    } else {
-      setRenameChatId(null);
-      setNewChatTitle("");
     }
+    setRenameChatId(null);
+    setNewChatTitle("");
   };
 
-  // Delete chat
   const handleDeleteChat = (chatId) => {
     setChatHistory((prev) => {
       const updatedHistory = prev.filter((chat) => chat.id !== chatId);

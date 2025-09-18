@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import { FaArrowCircleRight } from "react-icons/fa";
 import { TextInputForm } from "../components/Forms";
 import categoryData from "./data";
 import "./Chat.css";
 
-// Chat component
+// Utility function to generate unique ID
+const generateUniqueId = () => {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+};
+
 const Chat = ({ setChatHistory, chatHistory }) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [displayedBotMessage, setDisplayedBotMessage] = useState("");
@@ -17,22 +25,31 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [loadingChatId, setLoadingChatId] = useState(null);
   const [isFirstMessage, setIsFirstMessage] = useState(true);
 
-  // Load messages when id or chatHistory changes
+  // Initialize chat if it doesn't exist
   useEffect(() => {
     const currentChat = chatHistory.find((chat) => chat.id === id);
     if (currentChat && currentChat.messages) {
       setMessages(currentChat.messages);
       setIsFirstMessage(currentChat.messages.length === 0);
-    } else {
+    } else if (id === "new") {
+      const newId = generateUniqueId();
+      const newChat = { id: newId, title: "New Chat", messages: [] };
+      setChatHistory((prev) => {
+        const updatedHistory = [newChat, ...prev];
+        localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+        return updatedHistory;
+      });
+      navigate(`/chat/${newId}`, { replace: true });
       setMessages([]);
       setIsFirstMessage(true);
+    } else {
+      navigate("/chat/new", { replace: true }); // Redirect invalid IDs to /chat/new
     }
-  }, [id, chatHistory]);
+  }, [id, chatHistory, navigate, setChatHistory]);
 
   // Find best match for user message
   const findBestMatch = (userMessage) => {
     const userMessageClean = userMessage.toLowerCase().trim();
-
     for (const category in categoryData) {
       if (categoryData[category].data) {
         for (const qa of categoryData[category].data) {
@@ -43,7 +60,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         }
       }
     }
-
     return { match: null, category: null };
   };
 
@@ -75,36 +91,58 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Auto-rename on first message
-    if (isFirstMessage) {
-      const matched = findBestMatch(message);
-      const newTitle = generateTitleFromMessage(message, matched);
-      setChatHistory((prev) =>
-        prev.map((chat) =>
-          chat.id === id ? { ...chat, title: newTitle } : chat
-        )
+    let newChatId = id; // Store the chat ID to use for bot response
+    setChatHistory((prev) => {
+      let updatedHistory = [...prev];
+      const currentChatIndex = updatedHistory.findIndex(
+        (chat) => chat.id === id
       );
-      setIsFirstMessage(false);
-    }
 
-    // Save user message to chat history
-    setChatHistory((prev) =>
-      prev.map((chat) =>
-        chat.id === id ? { ...chat, messages: updatedMessages } : chat
-      )
-    );
+      if (currentChatIndex === -1) {
+        // Create new chat if it doesn't exist
+        newChatId = generateUniqueId(); // Update newChatId for bot response
+        const matched = findBestMatch(message);
+        const newTitle = generateTitleFromMessage(message, matched);
+        const newChat = {
+          id: newChatId,
+          title: newTitle,
+          messages: [userMessage],
+        };
+        updatedHistory = [newChat, ...updatedHistory];
+        navigate(`/chat/${newChatId}`, { replace: true });
+        setIsFirstMessage(false);
+      } else {
+        // Update existing chat
+        const matched = findBestMatch(message);
+        const newTitle = isFirstMessage
+          ? generateTitleFromMessage(message, matched)
+          : updatedHistory[currentChatIndex].title;
+        updatedHistory[currentChatIndex] = {
+          ...updatedHistory[currentChatIndex],
+          title: newTitle,
+          messages: updatedMessages,
+        };
+        setIsFirstMessage(false);
+      }
+
+      localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+      return updatedHistory;
+    });
 
     setMessage("");
 
-    // Simulate bot typing
-    setLoadingChatId(id);
+    // Simulate bot typing with the correct chatId
+    setLoadingChatId(newChatId);
     setTimeout(() => {
       const matched = findBestMatch(message);
       const botResponse = matched.match
         ? matched.match.answer
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
-
-      setPendingBotMessage({ text: botResponse, sender: "bot", chatId: id });
+      setPendingBotMessage({
+        text: botResponse,
+        sender: "bot",
+        chatId: newChatId,
+      });
       setLoadingChatId(null);
       setDisplayedBotMessage("");
       setIsTyping(true);
@@ -124,13 +162,15 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         return () => clearTimeout(timer);
       } else {
         setMessages((prev) => [...prev, pendingBotMessage]);
-        setChatHistory((prev) =>
-          prev.map((chat) =>
+        setChatHistory((prev) => {
+          const updatedHistory = prev.map((chat) =>
             chat.id === id
               ? { ...chat, messages: [...chat.messages, pendingBotMessage] }
               : chat
-          )
-        );
+          );
+          localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+          return updatedHistory;
+        });
         setIsTyping(false);
         setPendingBotMessage(null);
         setDisplayedBotMessage("");
