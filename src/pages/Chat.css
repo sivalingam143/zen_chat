@@ -15,8 +15,7 @@
 .chat-area {
   background: #f9fafb;
   border-radius: 16px;
-  padding: 20px;
-  height: 100%;
+  margin-top: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 

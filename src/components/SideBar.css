@@ -87,8 +87,9 @@ ul {
 }
 #main {
   margin-left: 280px;
-  margin-top: 72px;
-  padding: 20px;
+  margin-top: 0px;
+  padding: 10px;
+  padding-top: 60px;
   transition: 0.3s all;
   background: #f1f5f9;
 }
