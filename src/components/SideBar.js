@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
-import { ClickButton } from "./Buttons";
+import ClickButton from "./ClickButton";
 import Chat from "../pages/Chat";
 import "./SideBar.css";
 
@@ -140,9 +140,9 @@ const SideBar = () => {
           <ul>
             <li className="new-chat-button">
               <ClickButton
-                label={<>New Chat</>}
+                label="New Chat"
                 onClick={handleNewChat}
-                className="instant-add w-100"
+                className=" w-100"
               />
             </li>
           </ul>
