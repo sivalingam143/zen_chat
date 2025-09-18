@@ -30,10 +30,9 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
   // Match function
   const findBestMatch = (userMessage) => {
-    const userWords = userMessage
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((word) => word.length > 2);
+    const userMessageClean = userMessage.toLowerCase().trim();
+    const userWords = userMessageClean.split(/\s+/).filter((w) => w.length > 2);
+
     let bestMatch = null;
     let bestCategory = null;
     let bestScore = 0;
@@ -41,8 +40,16 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     for (const category in categoryData) {
       if (categoryData[category].data) {
         for (const qa of categoryData[category].data) {
-          const qaWords = qa.question.toLowerCase().split(/\s+/);
-          let score = 0;
+          const qaClean = qa.question.toLowerCase().trim();
+          const qaWords = qaClean.split(/\s+/);
+
+          // 1️⃣ Exact or near-exact sentence match (top priority)
+          if (userMessageClean === qaClean) {
+            return { match: qa, category };
+          }
+
+          // 2️⃣ Word overlap score
+          let overlap = 0;
           for (const userWord of userWords) {
             if (
               qaWords.some(
@@ -50,18 +57,25 @@ const Chat = ({ setChatHistory, chatHistory }) => {
                   qaWord.includes(userWord) || userWord.includes(qaWord)
               )
             ) {
-              score++;
+              overlap++;
             }
           }
-          const similarity = score / Math.max(userWords.length, qaWords.length);
-          if (similarity > 0.7 && similarity > bestScore) {
-            bestScore = similarity;
+
+          const similarity =
+            overlap / Math.max(userWords.length, qaWords.length);
+
+          // 3️⃣ Weighted score: prefer higher similarity when overlap words are same
+          const weightedScore = similarity + overlap * 0.01;
+
+          if (weightedScore > bestScore) {
+            bestScore = weightedScore;
             bestMatch = qa;
             bestCategory = category;
           }
         }
       }
     }
+
     return { match: bestMatch, category: bestCategory };
   };
 
