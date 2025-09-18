@@ -31,52 +31,20 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   // Match function
   const findBestMatch = (userMessage) => {
     const userMessageClean = userMessage.toLowerCase().trim();
-    const userWords = userMessageClean.split(/\s+/).filter((w) => w.length > 2);
-
-    let bestMatch = null;
-    let bestCategory = null;
-    let bestScore = 0;
 
     for (const category in categoryData) {
       if (categoryData[category].data) {
         for (const qa of categoryData[category].data) {
           const qaClean = qa.question.toLowerCase().trim();
-          const qaWords = qaClean.split(/\s+/);
-
-          // 1️⃣ Exact or near-exact sentence match (top priority)
           if (userMessageClean === qaClean) {
             return { match: qa, category };
-          }
-
-          // 2️⃣ Word overlap score
-          let overlap = 0;
-          for (const userWord of userWords) {
-            if (
-              qaWords.some(
-                (qaWord) =>
-                  qaWord.includes(userWord) || userWord.includes(qaWord)
-              )
-            ) {
-              overlap++;
-            }
-          }
-
-          const similarity =
-            overlap / Math.max(userWords.length, qaWords.length);
-
-          // 3️⃣ Weighted score: prefer higher similarity when overlap words are same
-          const weightedScore = similarity + overlap * 0.01;
-
-          if (weightedScore > bestScore) {
-            bestScore = weightedScore;
-            bestMatch = qa;
-            bestCategory = category;
           }
         }
       }
     }
 
-    return { match: bestMatch, category: bestCategory };
+    // No exact match
+    return { match: null, category: null };
   };
 
   const generateTitleFromMessage = (userMessage, matched) => {
