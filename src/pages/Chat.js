@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Row } from "react-bootstrap";
-import { PageTitle } from "../components/PageTitle";
 import { TextInputForm } from "../components/Forms";
 import { FaArrowCircleRight } from "react-icons/fa";
 import "./Chat.css";
@@ -15,7 +14,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [pendingBotMessage, setPendingBotMessage] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFirstMessage, setIsFirstMessage] = useState(true); // Track first message for auto rename
+  const [isFirstMessage, setIsFirstMessage] = useState(true);
 
   // Load messages when id or chatHistory changes
   useEffect(() => {
@@ -29,12 +28,12 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     }
   }, [id, chatHistory]);
 
-  // Improved matching function (returns match with category for title gen)
+  // Match function
   const findBestMatch = (userMessage) => {
     const userWords = userMessage
       .toLowerCase()
       .split(/\s+/)
-      .filter((word) => word.length > 2); // Split words, ignore short
+      .filter((word) => word.length > 2);
     let bestMatch = null;
     let bestCategory = null;
     let bestScore = 0;
@@ -56,10 +55,9 @@ const Chat = ({ setChatHistory, chatHistory }) => {
           }
           const similarity = score / Math.max(userWords.length, qaWords.length);
           if (similarity > 0.7 && similarity > bestScore) {
-            // 70% match threshold
             bestScore = similarity;
             bestMatch = qa;
-            bestCategory = category; // Capture category for title
+            bestCategory = category;
           }
         }
       }
@@ -69,7 +67,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
   const generateTitleFromMessage = (userMessage, matched) => {
     if (matched.match) {
-      // Use category + snippet from answer (professional title)
       const snippet =
         matched.match.answer.split(".")[0].substring(0, 30) +
         (matched.match.answer.length > 30 ? "..." : "");
@@ -77,7 +74,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         matched.category.charAt(0).toUpperCase() + matched.category.slice(1)
       }: ${snippet}`;
     } else {
-      // No match: Generic based on message
       if (
         userMessage.toLowerCase().includes("hi") ||
         userMessage.toLowerCase().includes("hello")
@@ -95,7 +91,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Auto rename on first message with smart title
+    // Auto rename on first message
     if (isFirstMessage) {
       const matched = findBestMatch(message);
       const newTitle = generateTitleFromMessage(message, matched);
@@ -107,37 +103,34 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       setIsFirstMessage(false);
     }
 
-    // Update chatHistory in localStorage and parent state
+    // Save user message
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === id ? { ...chat, messages: updatedMessages } : chat
       )
     );
 
-    // Clear input immediately
     setMessage("");
 
-    // Show loading state for 2 seconds
+    // Bot typing simulation
     setIsLoading(true);
     setTimeout(() => {
-      // Improved search
       const matched = findBestMatch(message);
-
       const botResponse = matched.match
         ? matched.match.answer
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
-      // Store bot response in pending state
-      setPendingBotMessage({ text: botResponse, sender: "bot" });
+      // LOCK chat id with the pending bot message
+      setPendingBotMessage({ text: botResponse, sender: "bot", chatId: id });
       setIsLoading(false);
       setDisplayedBotMessage("");
       setIsTyping(true);
     }, 2000);
   };
 
-  // Character-by-character typing effect
+  // Typing effect with chatId lock
   useEffect(() => {
-    if (isTyping && pendingBotMessage) {
+    if (isTyping && pendingBotMessage && pendingBotMessage.chatId === id) {
       const fullText = pendingBotMessage.text;
       let currentIndex = displayedBotMessage.length;
 
@@ -145,10 +138,9 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         const timer = setTimeout(() => {
           setDisplayedBotMessage(fullText.slice(0, currentIndex + 1));
         }, 50);
-
         return () => clearTimeout(timer);
       } else {
-        // Typing complete, add to messages and clear pending
+        // Finish typing, push to messages
         setMessages((prev) => [...prev, pendingBotMessage]);
         setChatHistory((prev) =>
           prev.map((chat) =>
@@ -190,11 +182,13 @@ const Chat = ({ setChatHistory, chatHistory }) => {
                     Loading<span className="loading-dots">...</span>
                   </div>
                 )}
-                {isTyping && pendingBotMessage && (
-                  <div className="message bot-message">
-                    {displayedBotMessage || "..."}
-                  </div>
-                )}
+                {isTyping &&
+                  pendingBotMessage &&
+                  pendingBotMessage.chatId === id && (
+                    <div className="message bot-message">
+                      {displayedBotMessage || "..."}
+                    </div>
+                  )}
               </div>
             )}
           </div>
