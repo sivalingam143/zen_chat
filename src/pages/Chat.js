@@ -29,13 +29,14 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     }
   }, [id, chatHistory]);
 
-  // Improved matching function (word-based similarity)
+  // Improved matching function (returns match with category for title gen)
   const findBestMatch = (userMessage) => {
     const userWords = userMessage
       .toLowerCase()
       .split(/\s+/)
       .filter((word) => word.length > 2); // Split words, ignore short
     let bestMatch = null;
+    let bestCategory = null;
     let bestScore = 0;
 
     for (const category in categoryData) {
@@ -58,11 +59,33 @@ const Chat = ({ setChatHistory, chatHistory }) => {
             // 70% match threshold
             bestScore = similarity;
             bestMatch = qa;
+            bestCategory = category; // Capture category for title
           }
         }
       }
     }
-    return bestMatch;
+    return { match: bestMatch, category: bestCategory };
+  };
+
+  const generateTitleFromMessage = (userMessage, matched) => {
+    if (matched.match) {
+      // Use category + snippet from answer (professional title)
+      const snippet =
+        matched.match.answer.split(".")[0].substring(0, 30) +
+        (matched.match.answer.length > 30 ? "..." : "");
+      return `${
+        matched.category.charAt(0).toUpperCase() + matched.category.slice(1)
+      }: ${snippet}`;
+    } else {
+      // No match: Generic based on message
+      if (
+        userMessage.toLowerCase().includes("hi") ||
+        userMessage.toLowerCase().includes("hello")
+      ) {
+        return "Casual Conversation Starter";
+      }
+      return userMessage.trim().substring(0, 50) || "General Chat";
+    }
   };
 
   const handleSendMessage = () => {
@@ -72,13 +95,13 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Auto rename on first message
+    // Auto rename on first message with smart title
     if (isFirstMessage) {
+      const matched = findBestMatch(message);
+      const newTitle = generateTitleFromMessage(message, matched);
       setChatHistory((prev) =>
         prev.map((chat) =>
-          chat.id === id
-            ? { ...chat, title: message.trim().substring(0, 50) || "New Chat" }
-            : chat
+          chat.id === id ? { ...chat, title: newTitle } : chat
         )
       );
       setIsFirstMessage(false);
@@ -98,10 +121,10 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     setIsLoading(true);
     setTimeout(() => {
       // Improved search
-      const matchedQA = findBestMatch(message);
+      const matched = findBestMatch(message);
 
-      const botResponse = matchedQA
-        ? matchedQA.answer
+      const botResponse = matched.match
+        ? matched.match.answer
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
       // Store bot response in pending state
