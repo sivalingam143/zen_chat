@@ -241,3 +241,10 @@ ul {
 .rename-save-btn:hover {
   background: #2563eb;
 }
+.list-text {
+  flex-grow: 1;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
