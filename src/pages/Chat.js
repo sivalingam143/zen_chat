@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Col, Container, Row } from "react-bootstrap";
-import { TextInputForm } from "../components/Forms";
+import { Container, Row, Col } from "react-bootstrap";
 import { FaArrowCircleRight } from "react-icons/fa";
-import "./Chat.css";
+import { TextInputForm } from "../components/Forms";
 import categoryData from "./data";
+import "./Chat.css";
 
+// Chat component
 const Chat = ({ setChatHistory, chatHistory }) => {
   const { id } = useParams();
   const [message, setMessage] = useState("");
@@ -13,7 +14,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
   const [displayedBotMessage, setDisplayedBotMessage] = useState("");
   const [pendingBotMessage, setPendingBotMessage] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
-  const [loadingChatId, setLoadingChatId] = useState(null); // ✅ loading tied to chatId
+  const [loadingChatId, setLoadingChatId] = useState(null);
   const [isFirstMessage, setIsFirstMessage] = useState(true);
 
   // Load messages when id or chatHistory changes
@@ -28,7 +29,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     }
   }, [id, chatHistory]);
 
-  // Match function
+  // Find best match for user message
   const findBestMatch = (userMessage) => {
     const userMessageClean = userMessage.toLowerCase().trim();
 
@@ -43,10 +44,10 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       }
     }
 
-    // No exact match
     return { match: null, category: null };
   };
 
+  // Generate chat title based on message
   const generateTitleFromMessage = (userMessage, matched) => {
     if (matched.match) {
       const snippet =
@@ -66,6 +67,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     }
   };
 
+  // Handle sending a message
   const handleSendMessage = () => {
     if (!message.trim()) return;
 
@@ -73,7 +75,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
 
-    // Auto rename on first message
+    // Auto-rename on first message
     if (isFirstMessage) {
       const matched = findBestMatch(message);
       const newTitle = generateTitleFromMessage(message, matched);
@@ -85,7 +87,7 @@ const Chat = ({ setChatHistory, chatHistory }) => {
       setIsFirstMessage(false);
     }
 
-    // Save user message
+    // Save user message to chat history
     setChatHistory((prev) =>
       prev.map((chat) =>
         chat.id === id ? { ...chat, messages: updatedMessages } : chat
@@ -94,8 +96,8 @@ const Chat = ({ setChatHistory, chatHistory }) => {
 
     setMessage("");
 
-    // Bot typing simulation with chatId lock
-    setLoadingChatId(id); // ✅ start loading only for this chat
+    // Simulate bot typing
+    setLoadingChatId(id);
     setTimeout(() => {
       const matched = findBestMatch(message);
       const botResponse = matched.match
@@ -103,13 +105,13 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         : `Hmm, I don't have a specific answer for "${message}", but I'm happy to help! Could you clarify or ask something else?`;
 
       setPendingBotMessage({ text: botResponse, sender: "bot", chatId: id });
-      setLoadingChatId(null); // ✅ stop loading once bot is ready
+      setLoadingChatId(null);
       setDisplayedBotMessage("");
       setIsTyping(true);
     }, 2000);
   };
 
-  // Typing effect with chatId lock
+  // Typing effect for bot response
   useEffect(() => {
     if (isTyping && pendingBotMessage && pendingBotMessage.chatId === id) {
       const fullText = pendingBotMessage.text;
@@ -121,7 +123,6 @@ const Chat = ({ setChatHistory, chatHistory }) => {
         }, 50);
         return () => clearTimeout(timer);
       } else {
-        // Finish typing, push to messages
         setMessages((prev) => [...prev, pendingBotMessage]);
         setChatHistory((prev) =>
           prev.map((chat) =>

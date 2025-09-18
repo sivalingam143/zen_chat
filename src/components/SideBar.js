@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./SideBar.css";
 import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import { FaEllipsisV } from "react-icons/fa";
 import { Header } from "./Header";
 import { ClickButton } from "./Buttons";
 import Chat from "../pages/Chat";
+import "./SideBar.css";
 
+// Sidebar component
 const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(
     JSON.parse(localStorage.getItem("openMenu")) || {}
@@ -53,6 +54,7 @@ const SideBar = () => {
     };
   }, [chatPopup]);
 
+  // Toggle menu visibility
   const handleMenuClick = (menuIndex) => {
     setOpenMenu((prevOpenMenu) => {
       const newOpenMenu = {};
@@ -64,6 +66,7 @@ const SideBar = () => {
     });
   };
 
+  // Handle chat link click
   const handleLinkClick = (chatId) => {
     if (window.innerWidth <= 768) {
       document.body.classList.remove("toggle-sidebar");
@@ -71,7 +74,7 @@ const SideBar = () => {
     localStorage.setItem("lastChatId", chatId);
   };
 
-  // Generate unique random ID (alphanumeric, ~30 chars)
+  // Generate unique random ID
   const generateUniqueId = () => {
     return (
       Math.random().toString(36).substring(2, 15) +
@@ -79,13 +82,10 @@ const SideBar = () => {
     );
   };
 
+  // Create new chat
   const handleNewChat = () => {
     const newId = generateUniqueId();
-    const newChat = {
-      id: newId,
-      title: "New Chat",
-      messages: [],
-    };
+    const newChat = { id: newId, title: "New Chat", messages: [] };
     setChatHistory((prev) => {
       const updatedHistory = [newChat, ...prev];
       localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
@@ -95,11 +95,13 @@ const SideBar = () => {
     navigate(`/chat/${newId}`);
   };
 
+  // Toggle chat options popup
   const handleChatPopup = (chatId) => {
     setChatPopup(chatPopup === chatId ? null : chatId);
     setRenameChatId(null);
   };
 
+  // Start renaming chat
   const handleRenameChat = (chatId) => {
     const chat = chatHistory.find((c) => c.id === chatId);
     setNewChatTitle(chat.title);
@@ -107,14 +109,14 @@ const SideBar = () => {
     setChatPopup(null);
   };
 
+  // Save renamed chat title
   const handleSaveRename = (chatId) => {
     if (newChatTitle.trim()) {
       setChatHistory((prev) =>
-        prev.map(
-          (chat) =>
-            chat.id === chatId
-              ? { ...chat, title: newChatTitle.trim().substring(0, 50) }
-              : chat // Limit to 50 chars
+        prev.map((chat) =>
+          chat.id === chatId
+            ? { ...chat, title: newChatTitle.trim().substring(0, 50) }
+            : chat
         )
       );
       setRenameChatId(null);
@@ -125,6 +127,7 @@ const SideBar = () => {
     }
   };
 
+  // Delete chat
   const handleDeleteChat = (chatId) => {
     setChatHistory((prev) => {
       const updatedHistory = prev.filter((chat) => chat.id !== chatId);
@@ -132,6 +135,7 @@ const SideBar = () => {
       return updatedHistory;
     });
     setChatPopup(null);
+
     const lastChatId = localStorage.getItem("lastChatId");
     if (lastChatId === chatId) {
       const remainingChats = chatHistory.filter((chat) => chat.id !== chatId);
@@ -141,7 +145,7 @@ const SideBar = () => {
         navigate(`/chat/${newLastChatId}`);
       } else {
         localStorage.removeItem("lastChatId");
-        navigate("/chat/new"); // Redirect if no chats
+        navigate("/chat/new");
       }
     }
   };
@@ -180,7 +184,7 @@ const SideBar = () => {
                           onKeyDown={(e) => {
                             if (e.key === "Enter") handleSaveRename(chat.id);
                           }}
-                          onBlur={() => handleSaveRename(chat.id)} // 🔹 Auto-save on outside click
+                          onBlur={() => handleSaveRename(chat.id)}
                         />
                       </div>
                     ) : (
