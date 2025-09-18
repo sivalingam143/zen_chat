@@ -46,7 +46,7 @@ ul {
 #side-bar .list-group li > .nav-link:hover,
 #side-bar .list-group li > .sub-menu:hover,
 #side-bar .list-group li .active {
-  background-color: #3b82f6;
+  background-color: #303132;
   color: #ffffff !important;
 }
 .list-icon {
@@ -100,6 +100,9 @@ ul {
   margin-top: auto;
   padding-top: 15px;
   border-top: 1px solid #e2e8f0;
+  position: fixed;
+  bottom: 0;
+  padding-bottom: 5px;
 }
 .user-profile-container {
   display: flex;
@@ -109,6 +112,7 @@ ul {
   transition: all 0.3s;
   gap: 12px;
   background-color: #f1f5f9;
+  width: 250px;
 }
 
 .user-initial {
