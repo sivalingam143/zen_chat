@@ -23,6 +23,7 @@
   text-align: center;
   color: #94a3b8;
   font-size: 16px;
+  padding: 20px;
   font-weight: 500;
 }
 
@@ -68,17 +69,16 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s;
 }
-
 .user-message {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #09111e, #2563eb);
   color: #ffffff;
   align-self: flex-end;
   margin-left: auto;
 }
 
 .bot-message {
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  color: #1e293b;
+  background: linear-gradient(135deg, #38487e, #b87373);
+  color: #ffffff;
   align-self: flex-start;
 }
 
