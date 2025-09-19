@@ -10,16 +10,23 @@ ul {
   top: 72px;
   left: 0;
   bottom: 0;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  background: linear-gradient(180deg, #f8fafc, #e2e8f0);
-  transition: 0.3s all;
-  z-index: 998;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
   width: 280px;
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+  transition: 0.3s all;
+  z-index: 998;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+.list-group {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.list-group > ul {
+  padding: 0;
+  margin: 0;
 }
 .toggle-sidebar .side-bar {
   left: -280px;
@@ -59,10 +66,17 @@ ul {
   font-size: 22px;
 }
 .chat-history {
-  margin-top: 20px;
+  margin-top: 0;
   padding-top: 15px;
   border-top: 1px solid #e2e8f0;
+  overflow-y: auto;
+  flex: 1 1 auto;
 }
+.chat-history ul {
+  padding: 0;
+  margin: 0;
+}
+
 .chat-history h6 {
   font-size: 14px;
   font-weight: 600;
@@ -83,7 +97,11 @@ ul {
   color: #64748b;
 }
 .new-chat-button {
-  margin-bottom: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  padding: 10px 0;
+  margin-bottom: 8px;
 }
 #main {
   margin-left: 280px;
