@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navbar, Container, Button, Spinner } from "react-bootstrap";
 import { MdLogout } from "react-icons/md";
 import "./Header.css";
+import { FaTrashAlt } from "react-icons/fa";
 
 const Header = ({ setChatHistory, navigate }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +47,7 @@ const Header = ({ setChatHistory, navigate }) => {
               className="clear-chat-btn me-2"
               onClick={handleClearChatHistory}
             >
-              Clear Session
+              <FaTrashAlt size={14} /> Clear Session
             </Button>
             {/* <Button className="logout-btn" onClick={handleLogout}>
               <MdLogout size={24} />
