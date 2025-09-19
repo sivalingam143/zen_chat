@@ -66,12 +66,19 @@ ul {
   font-size: 22px;
 }
 .chat-history {
+  overflow-y: auto;
+  flex: 1 1 auto;
   margin-top: 0;
   padding-top: 15px;
   border-top: 1px solid #e2e8f0;
-  overflow-y: auto;
-  flex: 1 1 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.chat-history::-webkit-scrollbar {
+  display: none;
+}
+
 .chat-history ul {
   padding: 0;
   margin: 0;
