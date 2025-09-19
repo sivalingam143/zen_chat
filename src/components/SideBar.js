@@ -207,12 +207,6 @@ const SideBar = () => {
             </ul>
           </div>
         </div>
-        <div className="user-profile">
-          <div className="user-profile-container">
-            <div className="user-initial">{userInitial}</div>
-            <span className="user-name">{user?.name || "Guest"}</span>
-          </div>
-        </div>
       </aside>
       <div id="main">
         <Routes>
