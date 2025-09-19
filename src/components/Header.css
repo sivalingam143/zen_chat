@@ -37,3 +37,10 @@
     height: 60px;
   }
 }
+
+.clear-chat-btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  background: red !important;
+  color: white !important;
+}

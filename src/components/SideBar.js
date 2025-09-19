@@ -139,7 +139,7 @@ const SideBar = () => {
 
   return (
     <div className="chatgpt-sidebar-container">
-      <Header />
+      <Header setChatHistory={setChatHistory} navigate={navigate} />
       <aside id="side-bar" className="side-bar">
         <div className="list-group">
           <ul>

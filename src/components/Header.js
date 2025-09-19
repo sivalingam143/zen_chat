@@ -3,7 +3,7 @@ import { Navbar, Container, Button, Spinner } from "react-bootstrap";
 import { MdLogout } from "react-icons/md";
 import "./Header.css";
 
-const Header = () => {
+const Header = ({ setChatHistory, navigate }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -15,9 +15,17 @@ const Header = () => {
   const handleToggle = () => {
     document.body.classList.toggle("toggle-sidebar");
   };
+
   const handleLogout = () => {
     localStorage.removeItem("session");
     window.location.replace("/login");
+  };
+
+  const handleClearChatHistory = () => {
+    localStorage.removeItem("chatHistory");
+    localStorage.removeItem("lastChatId");
+    setChatHistory([]);
+    navigate("/chat/new");
   };
 
   return (
@@ -33,11 +41,17 @@ const Header = () => {
               <span className="navbar-toggler-icon"></span>
             </Button>
           </div>
-          {/* <div className="ms-auto">
-            <Button className="logout-btn" onClick={handleLogout}>
-              <MdLogout size={24} />
+          <div className="ms-auto d-flex align-items-center">
+            <Button
+              className="clear-chat-btn me-2"
+              onClick={handleClearChatHistory}
+            >
+              Clear Session
             </Button>
-          </div> */}
+            {/* <Button className="logout-btn" onClick={handleLogout}>
+              <MdLogout size={24} />
+            </Button> */}
+          </div>
         </Container>
       </Navbar>
       {isLoading && (
