@@ -80,6 +80,11 @@ const SideBar = () => {
     });
     localStorage.setItem("lastChatId", newId);
     navigate(`/chat/${newId}`);
+
+    // Close sidebar on mobile after creating a new chat
+    if (window.innerWidth <= 768) {
+      document.body.classList.remove("toggle-sidebar");
+    }
   };
 
   const handleChatPopup = (chatId) => {
