@@ -15,10 +15,10 @@ const Header = () => {
   const handleToggle = () => {
     document.body.classList.toggle("toggle-sidebar");
   };
-  // const handleLogout = () => {
-  //   localStorage.removeItem("session");
-  //   window.location.replace("/login");
-  // };
+  const handleLogout = () => {
+    localStorage.removeItem("session");
+    window.location.replace("/login");
+  };
 
   return (
     <div>
@@ -33,11 +33,11 @@ const Header = () => {
               <span className="navbar-toggler-icon"></span>
             </Button>
           </div>
-          <div className="ms-auto">
-            <Button className="logout-btn" onClick={/* handleLogout */ null}>
+          {/* <div className="ms-auto">
+            <Button className="logout-btn" onClick={handleLogout}>
               <MdLogout size={24} />
             </Button>
-          </div>
+          </div> */}
         </Container>
       </Navbar>
       {isLoading && (
