@@ -1623,6 +1623,393 @@ const categoryData = {
       },
     ],
   },
+
+  Sheet1: {
+    totalQuestions: 56,
+    totalAnswers: 56,
+    data: [
+      {
+        question:
+          "What is the Transaction Builder’s queue, and why is it essential in TICI workflows?",
+        answer:
+          "The Transaction Builder’s queue is a searchable interface that displays every transaction record in the TICI database. It serves as the starting point for most Data Ops workflows, making it essential for locating, verifying, and managing transaction records. Familiarity with its structure and features ensures efficient navigation and accurate data handling.",
+      },
+      {
+        question:
+          "What types of records are shown in the “All Transactions” view?",
+        answer:
+          "The “All Transactions” view displays both Published and Not Published records. It excludes only Deleted records. This view is the default and is used in nearly all Data Ops workflows because it provides the most comprehensive access to transaction data.",
+      },
+      {
+        question: "What is the purpose of the “Verified Transactions” view?",
+        answer:
+          "This view shows only Published records, which are visible to clients and downstream users. It excludes Not Published and Deleted records, making it ideal for verifying what external stakeholders can see.",
+      },
+      {
+        question:
+          "How does TICI handle deleted records differently from traditional deletion?",
+        answer:
+          "TICI does not permanently delete records. Instead, deleted transactions are moved to a separate “Deleted Transactions” view. This preserves the data for future reference or restoration, supporting auditability and data recovery.",
+      },
+      {
+        question: "How can users filter data in the queue?",
+        answer:
+          "Each database field (except Action and Select) has a filter tool below its column header. Users can type into the “Contains” box for basic filtering or click the Filter button for advanced options like: 1. Equals / Not Equals 2. Starts With / Ends With 3. Greater Than / Less Than 4. In Range 5. Blanks",
+      },
+      {
+        question: "What makes the Transaction Date filter unique?",
+        answer:
+          "Unlike other fields, the Transaction Date filter is designed for date-specific searches. It allows users to target exact dates or ranges, which is crucial for time-sensitive workflows.",
+      },
+      {
+        question:
+          "What are pre-populated checkbox filters, and where are they used?",
+        answer:
+          "Some fields like Record Status and Country offer checkbox filters with predefined values. These simplify filtering by allowing users to quickly select or deselect multiple options without typing.",
+      },
+      {
+        question: "What is the function of the “Clear Filters” button?",
+        answer:
+          "When any filter is active, the “Clear Filters” button appears above the queue window. Clicking it removes all filters, resetting the view and allowing users to start a new workflow or search.",
+      },
+      {
+        question:
+          "If a user wants to check what clients can see, which view should they use?",
+        answer:
+          "They should use the Verified Transactions view, as it displays only Published records that are visible externally.",
+      },
+      {
+        question:
+          "How would a user find transactions from a specific country and within a certain date range?",
+        answer:
+          "They would: 1. Use the Country checkbox filter to select the desired country. 2. Use the Transaction Date filter to specify the date range. This combination narrows down the results effectively.",
+      },
+      {
+        question:
+          "What should a user do if they suspect a transaction was deleted by mistake?",
+        answer:
+          "They should switch to the Deleted Transactions view to locate the record. Since TICI retains deleted records, the user can reference or restore it if needed.",
+      },
+      {
+        question: "Why don’t the Action and Select columns have filters?",
+        answer:
+          "These columns are not database fields. “Action” typically contains buttons for performing tasks (e.g., edit, delete), and “Select” is used for choosing records. Filtering isn’t applicable to these interactive elements.",
+      },
+      {
+        question:
+          "What risks arise from not understanding the queue’s structure and filtering tools?",
+        answer:
+          "Users may: 1. Miss existing records and create duplicates. 2. Fail to locate critical data. 3. Misinterpret record visibility. 4. Slow down workflows due to inefficient searches.",
+      },
+      {
+        question:
+          "How does the queue design support both discoverability and governance?",
+        answer:
+          "It offers: 1. Multiple views for different record statuses. 2. Advanced filtering for precise searches. 3. Retention of deleted records for audit trails. 4. Clear separation of client-visible data.",
+      },
+      {
+        question: "How can users ensure they’re not duplicating a transaction?",
+        answer:
+          "By thoroughly searching the All Transactions view using relevant filters (e.g., name, date, country), users can confirm whether a record already exists before creating a new one.",
+      },
+      {
+        question:
+          "What filtering strategy would you use to find all transactions that are not published and are missing a country value?",
+        answer:
+          "Apply: 1. Record Status filter: Select “Not Published”. 2. Country filter: Use the “Blanks” option. This isolates unpublished records with no country assigned.",
+      },
+      {
+        question: "How does sorting work in the Transaction Builder queue?",
+        answer:
+          "Sorting is done by clicking on a column header: First click: Sorts in ascending order. Second click: Sorts in descending order. Third click: Removes sorting.",
+      },
+      {
+        question:
+          "What issue can arise when sorting a queue with 1,000 records, and how can it be resolved?",
+        answer:
+          "Sorting may behave unpredictably when the queue contains the maximum displayable records (1,000). To resolve this, users should apply filters first to reduce the number of records below the limit before sorting.",
+      },
+      {
+        question: "How can users move columns in the queue?",
+        answer:
+          "Users can move columns by clicking and dragging the column header to a new position. However, this is disabled for pinned columns.",
+      },
+      {
+        question: "What does pinning a column do, and how is it performed?",
+        answer:
+          "Pinning fixes a column to the left or right side of the screen. To pin/unpin: Mouse over the column name. Select “Pin Column”. Default pinned columns include: Action, Property Transaction ID, Record Type, Record Status, and Select.",
+      },
+      {
+        question: "What limitation exists with column pinning and ordering?",
+        answer:
+          "Changes to column order and pin status are not saved when navigating away from the queue (e.g., to edit a transaction). Users must reapply these settings upon return.",
+      },
+      {
+        question: "How can users hide or show columns in the queue?",
+        answer:
+          "Click the Columns button on the far right of the queue window. A dialog opens with checkboxes for each column, allowing users to toggle visibility.",
+      },
+      {
+        question: "Are column visibility changes persistent across sessions?",
+        answer:
+          "No. Like pinning and ordering, column visibility changes are lost when navigating away from the queue.",
+      },
+      {
+        question:
+          "What navigation options are available at the bottom of the queue?",
+        answer:
+          "Users can: Change the number of results per page (up to 100). Navigate to the first, last, previous, or next page of results.",
+      },
+      {
+        question: "What are the main workflows initiated from the queue?",
+        answer:
+          "Users can: 1. Lock a transaction for editing. 2. Create a new transaction. 3. Change the publish status of a record.",
+      },
+      {
+        question: "How can a user open a transaction record from the queue?",
+        answer:
+          "Click anywhere on the row except: 1. The Action button (three dots), 2. The Select button, 3. The Publish Status fields.  If the record is not locked, it opens in read-only mode.",
+      },
+      {
+        question: "What must a user do to edit a transaction record?",
+        answer:
+          "The user must Lock the record. Once locked, the record status changes to Yours, allowing editing and publish status changes.",
+      },
+      {
+        question:
+          "What actions are available via the Action button for a record with status “Not Locked”?",
+        answer:
+          "1. Lock: Makes the record editable and changes status to Yours. 2. Add Comments: View/add/edit/delete internal comments. 3. Flip Property / Flip Portfolio: Create a new transaction using data from the selected one.",
+      },
+      {
+        question:
+          "What actions are available for a record with status “Locked”?",
+        answer:
+          "Add Comments: Users can comment but cannot edit until the record is unlocked.",
+      },
+      {
+        question:
+          "What actions are available for a record with status “Yours”?",
+        answer:
+          "1. Unlock: Makes the record editable by others. 2. Unlock All: Unlocks all records currently locked by the user. 3. Add Comments: View and manage comments.",
+      },
+      {
+        question: "What is the purpose of the “Create New” button?",
+        answer:
+          "It opens tools to create new transactions: 1. For new properties not in the database. 2. For portfolio transactions, For properties with prior sales, using the Flip tool via the Action button is faster.",
+      },
+      {
+        question: "What is the Flip Property / Flip Portfolio tool used for?",
+        answer:
+          "It builds a new transaction using data from an existing one. It’s especially useful for properties with at least one prior sale, streamlining data entry.",
+      },
+      {
+        question: "Why is it important to unlock records after editing?",
+        answer:
+          "Locked records with status “Yours” are inaccessible to other users. Unlocking ensures collaboration and prevents workflow bottlenecks.",
+      },
+      {
+        question:
+          "What risks arise from not understanding the locking mechanism?",
+        answer:
+          "Users may: 1. Accidentally block others from editing. 2. Leave records in an inaccessible state. 3. Cause delays in publishing or updating transactions.",
+      },
+      {
+        question: "How does the queue design support collaborative workflows?",
+        answer:
+          "Through: 1.Locking/unlocking mechanisms. 2.Commenting features. 3. Visibility controls. 4. Sorting and filtering tools for efficient navigation.",
+      },
+      {
+        question:
+          "What best practices should users follow when working in the queue?",
+        answer:
+          "1. Always unlock records after editing. 2. Use filters before sorting large datasets. 3. Use Flip tools for faster transaction creation. 4. Regularly clear filters to reset views. 5.Be mindful that column settings are not persistent.",
+      },
+      {
+        question: "What does the “Not Published” status indicate in TICI?",
+        answer:
+          "It means the transaction record is stored in the database but hidden from clients. It’s used for records that are incomplete, not yet closed, outside covered geographies, or not of type “Sale”.",
+      },
+      {
+        question:
+          "What are the conditions under which a transaction should be marked as Not Published?",
+        answer:
+          "1. The sale has not yet closed (e.g., listings or in-contract sales). 2. The transaction is outside covered geographies (currently only U.S. and Europe). 3. The Transaction Type ≠ Sale. 4. The record requires additional work before it’s client-ready.",
+      },
+      {
+        question: "Are there any substatus options for Not Published records?",
+        answer: "No. The Not Published status does not have substatus options.",
+      },
+      {
+        question:
+          "What criteria must be met before a transaction can be marked as Published?",
+        answer:
+          "1. The sale has closed. 2. The transaction is within covered geographies (U.S. or Europe). 3. The Transaction Type = Sale. 4.The record has been vetted and verified.",
+      },
+      {
+        question: "What are the two substatus options for Published records?",
+        answer:
+          "1. Publish to Web – Default substatus; sends the record to Sales Comps and other products via the web. 2. Verified Exclude from Web – Used for vetted records that must be hidden from the web platform due to product or technical reasons. Requires Manager-level approval.",
+      },
+      {
+        question: "Who can assign the “Verified Exclude from Web” substatus?",
+        answer:
+          "Only users with Manager-level privileges or higher. It should never be assigned or removed without Manager approval.",
+      },
+      {
+        question: "What happens when a record is marked as Deleted?",
+        answer:
+          "It is moved from the All Transactions queue to the Deleted Transactions queue. It is not permanently removed and can be restored later.",
+      },
+      {
+        question: "What types of records are candidates for deletion?",
+        answer:
+          "1. Duplicate transaction records. 2. Non-arms length transactions (buyer and seller are related). 3. Records created in error or that don’t represent valid transactions.",
+      },
+      {
+        question: "How can a Deleted record be restored?",
+        answer:
+          "Navigate to the Deleted Transactions queue and revert its Publish Status to move it back to the All Transactions queue.",
+      },
+      {
+        question: "When should “Manager to Review-To Publish” be used?",
+        answer:
+          "When: A user wants a Manager to review a record before publishing. The user does not have privileges to publish (Published status is greyed out).",
+      },
+      {
+        question: "When should “Manager to Review-To Delete” be used?",
+        answer:
+          "When: A user wants a Manager to review a record for deletion. The user does not have privileges to delete (Deleted status is greyed out).",
+      },
+      {
+        question: "What is Bulk Publishing and when is it useful?",
+        answer:
+          "Bulk Publishing allows users to change the Publish Status and Substatus of multiple records at once, which is efficient for processing large batches of transactions.",
+      },
+      {
+        question: "What are the steps to perform Bulk Publishing?",
+        answer:
+          "1. Use the Select column checkboxes to choose at least two records. 2. Ensure the records are Locked (Record Status = Yours). 3. Click the Bulk Publish button atop the Action column. 4. Choose the desired Publish Status and Substatus in the Bulk Update dialog.",
+      },
+      {
+        question: "Can you bulk publish records that are not locked by you?",
+        answer:
+          "No. You can only bulk publish records that are Locked and have a Record Status of Yours.",
+      },
+      {
+        question:
+          "What tools are accessible from the menu bar at the top of the queue page?",
+        answer:
+          "Data Import Tool – For importing transaction data (covered in a separate guide). Snippet Folder – For managing saved snippets (also covered in the Data Import Tool guide). Logout – Accessible by clicking your username in the top-right corner.",
+      },
+      {
+        question:
+          "Why is it important to understand the difference between Published and Not Published statuses?",
+        answer:
+          "Mislabeling a record could result in: Premature exposure of incomplete or inaccurate data to clients. Hidden records that are actually ready for publication. Understanding the criteria ensures data quality and client trust.",
+      },
+      {
+        question:
+          "What risks are associated with assigning “Verified Exclude from Web” without proper approval?",
+        answer:
+          "It could: 1. Hide important data from clients. 2. Violate internal protocols. 3. Lead to data inconsistency across platforms.",
+      },
+      {
+        question: "How does the Deleted status support data governance?",
+        answer:
+          "It ensures: 1. No permanent loss of data. 2. Auditability of removed records. 3. Flexibility to restore records if deletion was incorrect.",
+      },
+      {
+        question:
+          "What best practices should users follow when using Bulk Publish?",
+        answer:
+          "Double-check that all selected records meet publishing criteria. Ensure records are Locked before selection. Use Bulk Publish only when confident in the accuracy of the data.",
+      },
+      {
+        question:
+          "How does the Manager Review workflow support quality control?",
+        answer:
+          "It ensures that: Only qualified users make critical decisions. Records are reviewed for accuracy before publishing or deletion. There’s a clear approval process for sensitive actions.",
+      },
+    ],
+  },
+  Sheet2: {
+    totalQuestions: 12,
+    totalAnswers: 12,
+    data: [
+      {
+        question:
+          "What is the purpose of the Portfolio Summary card, and which fields are restricted from editing here?",
+        answer:
+          "The Portfolio Summary card provides a high-level overview of a portfolio transaction. It includes details such as:Portfolio name Number of properties traded Primary property sector and geography Size and percentage stake However, Reported Price, Currency, and Price Qualifier are not editable from this card. These fields can only be modified from the Sourcing subpage, ensuring consistency with source-referenced data.",
+      },
+      {
+        question:
+          "How does the Portfolio Differences card help ensure data accuracy?",
+        answer:
+          "The Portfolio Differences card compares the summary details entered in the Portfolio Summary with the actual data from individual property transaction records. It helps: 1.Identify missing properties in the portfolio 2. Highlight data entry errors 3. Detect inconsistencies between portfolio-level and property-level data This card is essential for maintaining data integrity across complex multi-property transactions.",
+      },
+      {
+        question:
+          "What happens when you click on a property in the Portfolio Property Summary card?",
+        answer:
+          "Clicking on a property in this card switches the view to that specific property’s transaction record. The currently selected property is highlighted in blue, allowing users to easily navigate between properties within the portfolio.",
+      },
+      {
+        question:
+          "What is the difference between 'Delete Selected Property' and using the Flip Tool to remove a property from a portfolio?",
+        answer:
+          "1. Delete Selected Property: Removes the property from the portfolio and sends its transaction record to the Deleted Queue. 2. Flip Tool (Split action): Removes the property from the portfolio but retains it as a standalone transaction, preserving its data and allowing further edits. Use the Flip Tool when the property should remain in the system as an independent transaction.",
+      },
+      {
+        question:
+          "When should you use 'Add Address' vs. the Flip Tool for adding a property to a portfolio?",
+        answer:
+          "Use Add Address when the property has never transacted before. Use the Flip Tool (Flip + Merge Into actions) when the property has previous transaction history, as this method is more efficient and preserves historical data.",
+      },
+      {
+        question:
+          "What types of information are captured in the Property Characteristics page?",
+        answer:
+          "This page is the most detailed and includes: 1. Sector Specific Characteristics – Property sector, size, physical traits 2. Property Terms – Occupancy, net operating income, ownership terms 3. General Property Characteristics – Number of buildings, mixed-use flag 4. Stake Interest – Ownership stake transacted 5. Parking – Parking availability and counts 6. Green Certification – Environmental certifications at time of sale 7. Tenants – Known tenants and lease details This page ensures a comprehensive profile of each property.",
+      },
+      {
+        question:
+          "What is the role of the Entities subpage in a transaction record?",
+        answer:
+          "Entities subpage documents the participants in the transaction: 1. Sellers and their individual stakes 2. Seller Brokers 3. Buyers and their individual stakes 4. Buyer Brokers All entities are managed via ARC’s Entity Master module, ensuring consistency across records.",
+      },
+      {
+        question:
+          "What is the difference between Portfolio Loans and Property Loans?",
+        answer:
+          "Portfolio Loans: Loans secured against a group of properties in the portfolio. Only appears in portfolio transactions. Property Loans: Loans secured against a single property that was sold. Each card includes lender names, loan amounts, and terms.",
+      },
+      {
+        question: "What is captured in the Deal Level Terms card?",
+        answer:
+          "This card records: Type of transaction (e.g., sale, refinancing, entity-level purchase) Currency used in the transaction It provides a top-level summary of the deal’s financial structure.",
+      },
+      {
+        question:
+          "How do Portfolio Level Sourcing and Property Level Sourcing differ?",
+        answer:
+          "Portfolio Level Sourcing: Contains rows for each source used to build the portfolio transaction record. Property Level Sourcing: Contains rows for each source used to build the individual property transaction record. Both cards help validate the transaction details against external sources.",
+      },
+      {
+        question:
+          "Why is it important to maintain consistency between portfolio-level and property-level data?",
+        answer:
+          "Consistency ensures: Accurate reporting Reliable analytics Prevention of data duplication or omission Trust in the system’s integrity for stakeholders",
+      },
+      {
+        question:
+          "What are the implications of incorrect stake interest data in a transaction record?",
+        answer:
+          "Incorrect stake interest can: Misrepresent ownership changes Affect valuation and financial modeling Lead to compliance issues or miscommunication with clients",
+      },
+    ],
+  },
 };
 
 export default categoryData;
